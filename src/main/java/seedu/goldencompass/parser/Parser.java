@@ -25,10 +25,9 @@ public class Parser {
                 throw new GoldenCompassException("Find what?");
             }
         }
-        default -> {
-            throw new GoldenCompassException("Invalid command");
-        }
+        default -> throw new GoldenCompassException("Invalid command");
         }
 
     }
+
 }
