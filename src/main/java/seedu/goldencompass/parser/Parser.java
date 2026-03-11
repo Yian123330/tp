@@ -2,10 +2,6 @@ package seedu.goldencompass.parser;
 
 import seedu.goldencompass.exception.GoldenCompassException;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 public class Parser {
 
     public String command = "";
@@ -32,7 +28,6 @@ public class Parser {
                 throw new GoldenCompassException("Invalid command");
             }
         }
-
 
     }
 }

@@ -5,7 +5,6 @@ import seedu.goldencompass.parser.Parser;
 import seedu.goldencompass.ui.Ui;
 
 import java.io.IOException;
-import java.util.Scanner;
 
 public class GoldenCompass {
     /**
