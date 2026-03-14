@@ -4,9 +4,9 @@ import seedu.goldencompass.exception.GoldenCompassException;
 import seedu.goldencompass.preparser.Config;
 import seedu.goldencompass.internship.Internship;
 import seedu.goldencompass.internship.InternshipList;
+import seedu.goldencompass.ui.Ui; // Import the UI class
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class AddInternshipCommand implements Executable {
 
-    //Use Config.DEFAULT_FLAG
-    private static final ArrayList<String> FLAGS = new ArrayList<>(Arrays.asList(Config.DEFAULT_FLAG, "/t"));
+    // 1. Roaring Cat says no need for DEFAULT_FLAG in the list, just the extra flags
+    private static final ArrayList<String> FLAGS = new ArrayList<>(List.of("/t"));
 
     private final InternshipList internshipList;
 
@@ -28,28 +28,22 @@ public class AddInternshipCommand implements Executable {
     @Override
     public void execute(Map<String, List<String>> flagToParamMap) throws GoldenCompassException {
 
-        try {
-            checkFlag(flagToParamMap, FLAGS);
-        } catch (GoldenCompassException e) {
-            // Catch the generic error and throw error message
-            throw new GoldenCompassException("Format invalid. Please key in: add COMPANY /t TITLE");
-        }
+        // 2. Trust their checkFlag; it already throws "missing flags" errors
+        checkFlag(flagToParamMap, FLAGS);
 
-        // Extract using Config.DEFAULT_FLAG
+        // 3. Extract logic: DEFAULT_FLAG is used for the company (the first part)
+        // String.join handles multiple entries if the user repeats a flag
         String companyName = String.join(" ", getParamsOf(Config.DEFAULT_FLAG, flagToParamMap)).trim();
         String title = String.join(" ", getParamsOf("/t", flagToParamMap)).trim();
 
         if (companyName.isEmpty() || title.isEmpty()) {
-            // Throw error if users leave the fields completely blank
-            throw new GoldenCompassException("Inputs cannot be empty. Please key in: add COMPANY /t TITLE");
+            throw new GoldenCompassException("Company name and title cannot be empty!");
         }
 
-        // Create the object and add it to the list
         Internship newInternship = new Internship(title, companyName);
         internshipList.add(newInternship);
 
-        // Show success message
-        System.out.println("Got it! I've added this internship to your compass:");
-        System.out.println("  " + newInternship);
+        // 4. Use Ui.print instead of System.out.println
+        new Ui().print("Got it! I've added this internship to your compass:\n  " + newInternship);
     }
 }
