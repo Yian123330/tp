@@ -1,6 +1,7 @@
 package seedu.goldencompass.command;
 
 import seedu.goldencompass.exception.GoldenCompassException;
+import seedu.goldencompass.exception.GoldenCompassTooManyArgumentsException;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class AddAliasCommand implements Executable{
         String[] params = flagToParamMap.get(DEFAULT_FLAG).get(0).split("\\s+");
 
         if(params.length != PARAM_LENGTH) {
-            //TODO throw
+            throw new GoldenCompassTooManyArgumentsException(PARAM_LENGTH);
         }
 
         String commandWord = params[COMMAND_WORD_INDEX];
