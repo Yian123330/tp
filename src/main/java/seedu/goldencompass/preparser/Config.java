@@ -30,22 +30,30 @@ public class Config {
         ALL_FLAGS.addAll(Arrays.asList(flags));
     }
 
+    /**
+     * Registers the {@code flags} to the system set.
+     * @param flags
+     * @see Config#registerCommandFlag(String, Set) 
+     */
     private static void registerSystemFlag(Set<String> flags) {
         ALL_FLAGS.addAll(flags);
     }
 
+    /**
+     * Register the {@code commandFlags} that belong to the {@code commandKeyword} into a map.
+     * <P></P>
+     * <B>Side effect:</B> it also registers the {@code commandFlags} to a system level set of all flags.
+     * @param commandKeyword a String
+     * @param commandFlags a Set
+     */
     public static void registerCommandFlag(String commandKeyword, Set<String> commandFlags) {
         commandFlags.add(DEFAULT_FLAG); //because every command implicitly has a default flag
         registerSystemFlag(commandFlags);
         COMMAND_TO_FLAGS_MAP.put(commandKeyword, commandFlags);
-        ALL_FLAGS.addAll(commandFlags);
     }
 
     public static Set<String> getCommandFlags(String commandKeyword) {
         return COMMAND_TO_FLAGS_MAP.get(commandKeyword);
-        for (String flag : flags) {
-            ALL_FLAGS.add(flag);
-        }
     }
 
     /**
