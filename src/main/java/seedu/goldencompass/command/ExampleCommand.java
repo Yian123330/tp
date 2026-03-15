@@ -1,6 +1,5 @@
 package seedu.goldencompass.command;
 
-import seedu.goldencompass.exception.GoldenCompassException;
 import seedu.goldencompass.preparser.Config;
 
 import java.util.Arrays;
