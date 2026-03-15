@@ -23,10 +23,7 @@ public class Config {
      * @param flags a string array
      */
     public static void registerFlag(String... flags) {
-        for(String flag : flags) {
-            ALL_FLAGS.add(flag);
-        }
-        
+        ALL_FLAGS.addAll(Arrays.asList(flags));
     }
 
     private static void registerSystemFlag(Set<String> flags) {
