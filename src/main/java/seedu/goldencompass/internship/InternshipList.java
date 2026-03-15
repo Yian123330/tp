@@ -1,5 +1,6 @@
 package seedu.goldencompass.internship;
 
+import seedu.goldencompass.ui.Ui;
 import java.util.ArrayList;
 
 /**
@@ -10,6 +11,18 @@ public class InternshipList {
 
     /** Internal list to store internship objects */
     private final ArrayList<Internship> internships = new ArrayList<>();
+
+    /** UI object for printing messages */
+    private Ui ui;
+
+    /**
+     * Constructs an InternshipList with the specified UI.
+     *
+     * @param ui The UI object to use for printing
+     */
+    public InternshipList(Ui ui) {
+        this.ui = ui;
+    }
 
     /**
      * Adds a new internship to the list.
@@ -26,7 +39,7 @@ public class InternshipList {
      *
      * @return The size of the internship list
      */
-    public int size() {
+    public int getSize() {
         return internships.size();
     }
 
@@ -41,10 +54,10 @@ public class InternshipList {
             return;
         }
 
-        System.out.println("Here are the internships you have added:");
+        ui.print("Here are the internships you have added:");
         for (int i = 0; i < internships.size(); i++) {
             Internship intern = internships.get(i);
-            System.out.println((i + 1) + ". " + intern.companyName + " - " + intern.title);
+            ui.print((i + 1) + ". " + intern.companyName + " - " + intern.title);
         }
     }
 }

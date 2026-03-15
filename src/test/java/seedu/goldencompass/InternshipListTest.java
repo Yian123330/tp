@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import seedu.goldencompass.internship.Internship;
 import seedu.goldencompass.internship.InternshipList;
+import seedu.goldencompass.ui.Ui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -18,12 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class InternshipListTest {
 
     private InternshipList internshipList;
+    private Ui ui;
     private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
 
     @BeforeEach
     public void setUp() {
-        internshipList = new InternshipList();
+        internshipList = new InternshipList(ui);
         // Redirect System.out to capture output for testing
         System.setOut(new PrintStream(outputStream));
     }
@@ -60,18 +62,18 @@ public class InternshipListTest {
         assertTrue(output.contains("1. Google - Software Engineer"));
         assertTrue(output.contains("2. Meta - Frontend Developer"));
         assertTrue(output.contains("3. Amazon - Backend Developer"));
-        assertEquals(3, internshipList.size()); // You'll need to add a size() method
+        assertEquals(3, internshipList.getSize());
     }
 
     @Test
     public void add_internship_increasesListSize() {
-        assertEquals(0, internshipList.size());
+        assertEquals(0, internshipList.getSize());
 
         internshipList.add(new Internship("Software Engineer", "Google"));
-        assertEquals(1, internshipList.size());
+        assertEquals(1, internshipList.getSize());
 
         internshipList.add(new Internship("Frontend Developer", "Meta"));
-        assertEquals(2, internshipList.size());
+        assertEquals(2, internshipList.getSize());
     }
 
     // Optional: Test for large number of entries
