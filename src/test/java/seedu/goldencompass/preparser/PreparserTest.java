@@ -22,16 +22,6 @@ public class PreparserTest {
     }
 
     @Test
-    public void parse_duplicateFlag_exceptionThrown() {
-        try {
-            new Preparser("example /a foo /a bar");
-            fail();
-        } catch (GoldenCompassParsingException e) {
-            assertEquals("Error: Duplicate flag: /a", e.getMessage());
-        }
-    }
-
-    @Test
     public void parse_unknownFlag_exceptionThrown() {
         try {
             new Preparser("example /z foo");

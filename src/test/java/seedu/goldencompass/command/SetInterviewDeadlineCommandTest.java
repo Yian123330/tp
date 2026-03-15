@@ -82,4 +82,17 @@ public class SetInterviewDeadlineCommandTest {
             assertEquals("Error: Index must be a valid integer, got: ", e.getMessage());
         }
     }
+
+    @Test
+    public void execute_duplicateFlag_exceptionThrown() {
+        Map<String, List<String>> map = new HashMap<>();
+        map.put(DEFAULT_FLAG, new ArrayList<>(Arrays.asList("1")));
+        map.put("/d", new ArrayList<>(Arrays.asList("2026-06-01", "2026-07-01")));
+        try {
+            command.execute(map);
+            fail();
+        } catch (GoldenCompassException e) {
+            assertEquals("Error: Duplicate flag: /d", e.getMessage());
+        }
+    }
 }
