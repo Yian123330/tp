@@ -8,6 +8,7 @@ import seedu.goldencompass.ui.Ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 /**
  * Sets the deadline date of an interview identified by its 1-based index in the interview list.
  * <p>
@@ -48,8 +49,19 @@ public class SetInterviewDeadlineCommand implements Command {
      */
     @Override
     public void execute() throws GoldenCompassException {
-        String indexParam = parser.getParamsOf(COMMAND_WORD).get(0).trim();
-        String dateParam = parser.getParamsOf(FLAG_DATE).get(0).trim();
+        List<String> indexParams = parser.getParamsOf(COMMAND_WORD);
+        if (indexParams == null || indexParams.get(0).trim().isEmpty()) {
+            throw new GoldenCompassException("Error: Please provide the index of the interview. "
+                    + "Usage: set-deadline INDEX /d DATE");
+        }
+        String indexParam = indexParams.get(0).trim();
+
+        List<String> dateParams = parser.getParamsOf(FLAG_DATE);
+        if (dateParams == null || dateParams.get(0).trim().isEmpty()) {
+            throw new GoldenCompassException("Error: Please provide a date using the /d flag. "
+                    + "Usage: set-deadline INDEX /d DATE");
+        }
+        String dateParam = dateParams.get(0).trim();
 
         int index;
         try {
