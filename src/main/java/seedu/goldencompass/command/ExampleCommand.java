@@ -1,34 +1,36 @@
 package seedu.goldencompass.command;
 
 import seedu.goldencompass.exception.GoldenCompassException;
-import seedu.goldencompass.preparser.Config;
+import seedu.goldencompass.internship.InternshipList;
+import seedu.goldencompass.parser.Parser;
+import seedu.goldencompass.ui.Ui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+public class ExampleCommand implements Command {
 
-public class ExampleCommand implements Executable{
+    private final Ui ui;
+    private final Parser parser;
+    private final InternshipList internships;
 
-    private static final ArrayList<String> FLAGS = new ArrayList<>(Arrays.asList("/eg", "/EG"));
-
-    public ExampleCommand() {
-        Config.registerFlag(FLAGS.toArray(new String[0]));
+    public ExampleCommand(Parser parser, InternshipList internships) {
+        ui = new Ui();
+        this.parser = parser;
+        this.internships = internships;
     }
 
-    /**
-     * Prints a list of legal flags with their respective parameters.
-     * <P><B>Example Use</B></P>
-     * @param flagToParamMap map
-     */
     @Override
-    public void execute(Map<String, List<String>> flagToParamMap) throws GoldenCompassException {
-        checkFlag(flagToParamMap, FLAGS);
-        System.out.println("hi, I am ExampleCommand");
+    public void execute() throws GoldenCompassException {
+
+        Map<String, List<String>> flagToParamMap = parser.getFlagToParamMap();
+
+        ui.print("hi, I am ExampleCommand");
+
         for(String key : flagToParamMap.keySet()) {
-            String[] params = getParamsOf(key, flagToParamMap);
-            System.out.println("I have this flag " + key + " with params: " + Arrays.toString(params));
+            List<String> params = parser.getParamsOf(key);
+            ui.print("I have this flag " + key + " with params: " + params);
         }
+
     }
 }
