@@ -1,10 +1,15 @@
 package seedu.goldencompass.internship;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class InterviewList {
 
-    private final ArrayList<Interview> interviews = new ArrayList<>();
+    private final List<Interview> interviews = new ArrayList<>();
+
+    public List<Interview> getInterviews() {
+        return interviews;
+    }
 
     public void add(Interview x) {
         interviews.add(x);
