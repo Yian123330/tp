@@ -23,16 +23,10 @@ public class AddInternshipCommandTest {
     @Test
     public void execute_validInput_addsInternshipSuccessfully() throws GoldenCompassException {
 
-        // 2. Simulate what the Preparser does for: add Shopee /t Software Engineer
-//        Map<String, List<String>> parameters = new HashMap<>();
-//        parameters.put("add-application", List.of("Shopee"));
-//        parameters.put("/t", List.of("Software Engineer"));
         parser.parse("add Shopee /t Software Engineer");
 
-        // 3. Execute the command
         addInternshipCommand.execute();
 
-        // 4. Verify the result (List should now have 1 item)
         assertEquals(1, internshipList.getSize());
     }
 
@@ -41,7 +35,6 @@ public class AddInternshipCommandTest {
 
         parser.parse("add     /t Software Engineer");
 
-        // Verify that executing this throws the expected exception
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
 
     }
@@ -51,7 +44,6 @@ public class AddInternshipCommandTest {
 
         parser.parse("add Shopee /t    ");
 
-        // Verify that executing this throws the expected exception
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
 
     }

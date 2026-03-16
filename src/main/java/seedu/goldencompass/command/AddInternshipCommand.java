@@ -27,16 +27,12 @@ public class AddInternshipCommand implements Command {
         this.flagToParamMap = parser.getFlagToParamMap();
     }
 
-    private static final ArrayList<String> FLAGS = new ArrayList<>(List.of("/t"));
-
-
     @Override
     public void execute() throws GoldenCompassException {
 
-//        checkFlag(flagToParamMap, FLAGS);
-
         String companyName = parser.getParamsOf("add").get(0);
         String title = "";
+        
         if (parser.getParamsOf("/t") != null) {
             title = String.join(" ", parser.getParamsOf("/t")).trim();
         }

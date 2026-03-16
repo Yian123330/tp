@@ -17,8 +17,6 @@ public class ExampleCommand implements Command {
     private final Parser parser;
     private final InternshipList internships;
 
-    private static final Set<String> COMMAND_FLAGS = new HashSet<>(Arrays.asList("/eg", "/EG"));
-
     public ExampleCommand(Parser parser, InternshipList internships) {
         ui = new Ui();
         this.parser = parser;
