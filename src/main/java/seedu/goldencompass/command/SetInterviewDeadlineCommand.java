@@ -8,14 +8,6 @@ import seedu.goldencompass.ui.Ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static seedu.goldencompass.parser.Config.DEFAULT_FLAG;
-
 /**
  * Sets the deadline date of an interview identified by its 1-based index in the interview list.
  * <p>
@@ -27,12 +19,10 @@ public class SetInterviewDeadlineCommand implements Command {
     public static final String COMMAND_WORD = "set-deadline";
 
     private static final String FLAG_DATE = "/d";
-    private static final ArrayList<String> FLAGS = new ArrayList<>(Arrays.asList(FLAG_DATE));
 
     private final InterviewList interviewList;
     private final Ui ui;
     private final Parser parser;
-    private Map<String, List<String>> flagToParamMap;
 
     /**
      * Constructs a {@code SetInterviewDeadlineCommand} with the given {@code InterviewList}.
