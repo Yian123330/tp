@@ -1,7 +1,5 @@
 package seedu.goldencompass.internship;
 
-import seedu.goldencompass.ui.Ui;
-
 import java.util.ArrayList;
 import java.util.List;
 
