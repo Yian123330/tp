@@ -15,6 +15,11 @@ public class CommandClass implements Command {
         ui = new Ui();
     }
 
+    public CommandClass(Parser parser) {
+        ui = new Ui();
+        this.parser = parser;
+    }
+
     @Override
     public void execute() throws GoldenCompassException {
 

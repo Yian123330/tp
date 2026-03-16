@@ -13,7 +13,7 @@ public class Parser {
     private final Preparser preparser;
 
     public Parser() throws GoldenCompassException {
-        Set<String> flagSet = Set.of("/by", "/from", "/to", "/t", "/d");
+        Set<String> flagSet = Set.of("/by", "/from", "/to", "/t", "/d", "/c", "/a");
         preparser = new Preparser(flagSet);
     }
 
