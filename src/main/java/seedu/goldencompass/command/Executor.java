@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Executor {
 
-    private final static Map<String, String> aliasToCommandWordMap = new HashMap<>();
+    private static final Map<String, String> ALIAS_MAP = new HashMap<>();
 
     private final Map<String, Command> commands;
     private final Parser parser;
@@ -33,13 +33,13 @@ public class Executor {
 
         //copy the key of commands into alias map
 
-        commands.keySet().forEach(key -> aliasToCommandWordMap.put(key, key));
+        commands.keySet().forEach(key -> ALIAS_MAP.put(key, key));
     }
 
     public void execute() throws GoldenCompassException {
 
         String inputAlias = parser.getCommand();
-        String commandWord = aliasToCommandWordMap.get(inputAlias);
+        String commandWord = ALIAS_MAP.get(inputAlias);
         Command cmd = commands.get(commandWord);
 
         if (cmd == null) {
@@ -51,9 +51,9 @@ public class Executor {
     }
 
     public static void addAlias(String command, String alias) throws GoldenCompassException {
-        if(aliasToCommandWordMap.get(command) == null) {
+        if(ALIAS_MAP.get(command) == null) {
             throw new GoldenCompassException("Error: Cannot add alias to \"" + command + " since it does not exist.");
         }
-        aliasToCommandWordMap.put(alias, command);
+        ALIAS_MAP.put(alias, command);
     }
 }
