@@ -5,12 +5,17 @@ import seedu.goldencompass.internship.InternshipList;
 import seedu.goldencompass.internship.InterviewList;
 import seedu.goldencompass.parser.Parser;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class Executor {
 
+    private static final Map<String, String> ALIAS_MAP = new HashMap<>();
+
     private final Map<String, Command> commands;
     private final Parser parser;
+
+
 
     public Executor(Parser parser, InternshipList internshipList, InterviewList interviewList) {
 
@@ -22,14 +27,20 @@ public class Executor {
                 "list", new ListCommand(internshipList),
                 "list-interview", new ListInterviewCommand(interviewList),
                 "set-deadline", new SetInterviewDeadlineCommand(parser, interviewList),
-                "add-interview", new AddInterviewCommand(parser, internshipList, interviewList)
+                "add-interview", new AddInterviewCommand(parser, internshipList, interviewList),
+                "alias", new AddAliasCommand(parser)
         );
 
+        //copy the key of commands into alias map
+
+        commands.keySet().forEach(key -> ALIAS_MAP.put(key, key));
     }
 
     public void execute() throws GoldenCompassException {
 
-        Command cmd = commands.get(parser.getCommand());
+        String inputAlias = parser.getCommand();
+        String commandWord = ALIAS_MAP.get(inputAlias);
+        Command cmd = commands.get(commandWord);
 
         if (cmd == null) {
             throw new GoldenCompassException("Error: unknown command: " + parser.getCommand());
@@ -39,4 +50,10 @@ public class Executor {
 
     }
 
+    public static void addAlias(String command, String alias) throws GoldenCompassException {
+        if(ALIAS_MAP.get(command) == null) {
+            throw new GoldenCompassException("Error: Cannot add alias to \"" + command + " since it does not exist.");
+        }
+        ALIAS_MAP.put(alias, command);
+    }
 }
