@@ -25,7 +25,7 @@ public class Internship {
 
     @Override
     public String toString() {
-        return title + " at " + companyName;
+        return companyName + " - " + title;
     }
 
 }
