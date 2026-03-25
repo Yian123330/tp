@@ -28,7 +28,9 @@ public class AliasStorage {
 
     public void load(Map<String, String> aliasMap) {
         File f = new File(filePath);
-        if (!f.exists()) return;
+        if (!f.exists()) {
+            return;
+        }
 
         try (Scanner s = new Scanner(f)) {
             while (s.hasNext()) {
