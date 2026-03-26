@@ -24,9 +24,12 @@ public class ListInterviewCommand extends CommandClass {
             return;
         }
 
-        ui.print("Here are the internships you have added:");
+        ui.print("Here are the interview invitations:");
 
-        interviews.forEach(x -> ui.print(x.toString()));
+        for (int i = 0; i < interviews.size(); i++) {
+            Interview interview = interviews.get(i);
+            ui.print((i + 1) + ". " + interview.toString());
+        }
 
     }
 

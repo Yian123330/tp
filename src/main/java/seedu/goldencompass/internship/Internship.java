@@ -87,8 +87,6 @@ public class Internship {
 
     @Override
     public String toString() {
-        String result = title + " at " + companyName;
-        assert result != null : "toString result should not be null";
-        return result;
+        return companyName + " - " + title;
     }
 }
