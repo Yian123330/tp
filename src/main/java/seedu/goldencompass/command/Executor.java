@@ -30,7 +30,9 @@ public class Executor {
                 "add-interview", new AddInterviewCommand(parser, internshipList, interviewList),
                 "alias", new AddAliasCommand(parser, this),
                 "remove-alias", new RemoveAliasCommand(parser, this),
-                "mark", new MarkOfferCommand(parser, internshipList)
+                "mark", new MarkOfferCommand(parser, internshipList),
+                "delete", new DeleteInternshipCommand(parser, internshipList)
+                //"delete-interview", new DeleteInterviewCommand(parser, internshipList, interviewList)
         );
 
         //copy the key of commands into alias map
