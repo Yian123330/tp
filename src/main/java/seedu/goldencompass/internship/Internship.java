@@ -11,16 +11,16 @@ public class Internship {
 
     private static final Logger logger = Logger.getLogger(Internship.class.getName());
 
+    // 1. Group all PROTECTED variables together
     protected String title;
     protected String companyName;
-    private ApplicationStatus status;
     protected String comments;
     protected String link;
     protected boolean hasApplied;
-    protected boolean hasReceivedOffer;
     protected Interview interview;
-    private boolean isOfferReceived = false;
-    private boolean isRejected = false;
+
+    // 2. Group all PRIVATE variables together
+    private ApplicationStatus status;
 
 
     /**
