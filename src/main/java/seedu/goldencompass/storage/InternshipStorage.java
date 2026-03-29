@@ -105,7 +105,7 @@ public class InternshipStorage {
 
                 String[] parts = line.split(" \\| ");
 
-                if (parts.length >= 2) {
+                if (parts.length == 2 || parts.length == 3) {
                     String title = parts[0].trim();
                     String company = parts[1].trim();
 
