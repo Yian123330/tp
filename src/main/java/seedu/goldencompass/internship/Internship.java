@@ -136,6 +136,9 @@ public class Internship {
         case REJECTED:
             tag = " [REJECTED] ❌";
             break;
+        case PENDING:
+            tag = " [PENDING] ";
+            break;
         default:
             tag = ""; // PENDING has no tag
             break;

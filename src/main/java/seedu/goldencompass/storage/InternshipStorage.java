@@ -114,11 +114,24 @@ public class InternshipStorage {
 
                     // 2. Update the status if a 3rd column exists
                     if (parts.length == 3) {
-                        String status = parts[2].trim();
-                        if (status.equals("OFFER")) {
+                        // .toUpperCase() makes it "defensive" so 'offer' or 'OFFER' both work
+                        String status = parts[2].trim().toUpperCase();
+
+                        switch (status) {
+                        case "OFFER":
                             loadedInternship.markAsOffer();
-                        } else if (status.equals("REJECTED")) {
+                            break;
+                        case "REJECTED":
                             loadedInternship.markAsRejected();
+                            break;
+                        case "PENDING":
+                            // This is the default state, so we don't need to do anything here.
+                            // But adding the case satisfies the reviewer's request!
+                            break;
+                        default:
+                            // This handles cases where the text file might be corrupted
+                            logger.warning("Unknown status found in file: " + status);
+                            break;
                         }
                     }
 
