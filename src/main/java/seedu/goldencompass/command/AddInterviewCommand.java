@@ -39,7 +39,7 @@ public class AddInterviewCommand extends CommandClass {
 
         List<String> params = parser.getParamsOf(COMMAND_WORD);
 
-        if (params == null || params.get(0).trim().isEmpty()) {
+        if (params == null || params.get(0).isBlank()) {
             throw new GoldenCompassException("Error: Please provide the index of the internship. "
                     + "Usage: add-interview INDEX /d DATE");
         }
@@ -48,7 +48,7 @@ public class AddInterviewCommand extends CommandClass {
         assert !indexParam.isEmpty() : "Index parameter should not be empty after validation";
 
         List<String> dateParams = parser.getParamsOf(FLAG_DATE);
-        if (dateParams == null || dateParams.get(0).trim().isEmpty()) {
+        if (dateParams == null || dateParams.get(0).isBlank()) {
             throw new GoldenCompassException("Error: Please provide a date using the /d flag. "
                     + "Usage: add-interview INDEX /d DATE");
         }

@@ -54,7 +54,7 @@ public class SetInterviewDeadlineCommand implements Command {
         assert interviewList != null : "InterviewList should not be null";
 
         List<String> indexParams = parser.getParamsOf(COMMAND_WORD);
-        if (indexParams == null || indexParams.get(0).trim().isEmpty()) {
+        if (indexParams == null || indexParams.get(0).isBlank()) {
             throw new GoldenCompassException("Error: Please provide the index of the interview. "
                     + "Usage: update-date INDEX /d DATE");
         }
@@ -62,7 +62,7 @@ public class SetInterviewDeadlineCommand implements Command {
         assert !indexParam.isEmpty() : "Index parameter should not be empty after validation";
 
         List<String> dateParams = parser.getParamsOf(FLAG_DATE);
-        if (dateParams == null || dateParams.get(0).trim().isEmpty()) {
+        if (dateParams == null || dateParams.get(0).isBlank()) {
             throw new GoldenCompassException("Error: Please provide a date using the /d flag. "
                     + "Usage: update-date INDEX /d DATE");
         }
