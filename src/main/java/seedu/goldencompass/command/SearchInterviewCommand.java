@@ -7,7 +7,6 @@ import seedu.goldencompass.parser.Parser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,28 +60,10 @@ public class SearchInterviewCommand extends CommandClass {
             }
         }
 
-        List<Interview> results = new ArrayList<>(interviewList.getInterviews());
-
-        if (companyKeyword != null) {
-            String keyword = companyKeyword.toLowerCase();
-            results = results.stream()
-                    .filter(i -> i.getInternship().getCompanyName().toLowerCase().contains(keyword))
-                    .toList();
-        }
-
-        if (titleKeyword != null) {
-            String keyword = titleKeyword.toLowerCase();
-            results = results.stream()
-                    .filter(i -> i.getInternship().getTitle().toLowerCase().contains(keyword))
-                    .toList();
-        }
-
-        if (dateFilter != null) {
-            LocalDate date = dateFilter;
-            results = results.stream()
-                    .filter(i -> i.getDate() != null && i.getDate().equals(date))
-                    .toList();
-        }
+        LocalDate date = dateFilter;
+        List<Interview> results = interviewList.getInterviews().stream()
+                .filter(i -> i.matches(companyKeyword, titleKeyword, date))
+                .toList();
 
         if (results.isEmpty()) {
             ui.print("No interviews found matching the search criteria.");
