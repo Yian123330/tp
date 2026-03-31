@@ -73,7 +73,7 @@ public class GoldenCompass {
                     break;
                 }
                 executor.execute();
-                if (!parser.getCommand().equals("list")) {
+                if (executor.isUndoable(parser.getCommand())) {
                     oldOperationSnapshot.snapshot(newOperationSnapshot);
                     newOperationSnapshot.snapshot(internships, interviews, executor.getAliasMap());
                 }

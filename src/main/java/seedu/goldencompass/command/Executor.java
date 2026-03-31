@@ -96,4 +96,8 @@ public class Executor {
         aliasMap.clear();
         aliasMap.putAll(newAliasMap);
     }
+
+    public boolean isUndoable(String command) {
+        return undoable.contains(command);
+    }
 }

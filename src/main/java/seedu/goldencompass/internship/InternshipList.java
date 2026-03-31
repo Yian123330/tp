@@ -66,8 +66,8 @@ public class InternshipList {
     }
 
     public void setInternships(List<Internship> internships) {
-       this.internships.clear();
-       this.internships.addAll(internships);
+        this.internships.clear();
+        this.internships.addAll(internships);
     }
 
     /**
