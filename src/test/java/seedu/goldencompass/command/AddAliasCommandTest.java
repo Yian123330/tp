@@ -9,7 +9,6 @@ import seedu.goldencompass.internship.InternshipList;
 import seedu.goldencompass.internship.InterviewList;
 import seedu.goldencompass.operation.OperationHistory;
 import seedu.goldencompass.parser.Parser;
-import seedu.goldencompass.operation.OperationSnapshot;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
