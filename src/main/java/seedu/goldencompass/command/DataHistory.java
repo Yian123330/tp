@@ -1,6 +1,5 @@
 package seedu.goldencompass.command;
 
-import seedu.goldencompass.exception.GoldenCompassException;
 import seedu.goldencompass.internship.InternshipList;
 import seedu.goldencompass.internship.InterviewList;
 import seedu.goldencompass.operation.OperationSnapshot;
