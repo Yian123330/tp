@@ -36,8 +36,7 @@ public class OperationHistory {
         redoStack.addFirst(current);
 
         //peek the second version, which is one version behind the current version
-        //null if there is no such history
-        return undoStack.peekFirst();
+        return past;
     }
 
     public OperationSnapshot getRedo() {
@@ -56,5 +55,19 @@ public class OperationHistory {
 
     public void clearRedo() {
         redoStack.clear();
+    }
+
+    /**
+     * This is a workaround to get the command that has been undone.
+     * <P>
+     * This is because the undo mechanism would replace the data with snapshot of one version earlier than the
+     * current version. But each snapshot records the command that results in that version. Since the current version
+     * would be pushed into redo stack, redo stack must have at least one element when trying to undo.
+     * So we peek the redo stack for the command that has been undone.
+     * @return the command that has been undone.
+     */
+    public String getUndoneCommand() {
+        assert redoStack.peekFirst() != null : "There is no redo history, call this after an undo";
+        return redoStack.peekFirst().command;
     }
 }

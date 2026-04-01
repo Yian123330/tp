@@ -39,5 +39,7 @@ public class UndoCommand extends Command implements DataHistory {
         }
 
         modifyDataWith(past, executor, internshipList, interviewList);
+
+        ui.print("Undo " + operationHistory.getUndoneCommand() + " successfully");
     }
 }

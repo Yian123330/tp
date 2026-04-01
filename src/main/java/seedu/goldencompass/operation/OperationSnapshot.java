@@ -8,30 +8,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OperationSnapshot {
-    //TODO change to CommandClass
-    //Command command;
+    protected String  command;
     private InternshipList internshipListCopy;
     private InterviewList interviewListCopy;
     private Map<String, String> aliasMapCopy;
 
     public OperationSnapshot() {
+        this.command = "";
         this.internshipListCopy = new InternshipList();
         this.interviewListCopy = new InterviewList();
         this.aliasMapCopy = new HashMap<>();
     }
 
     public OperationSnapshot(OperationSnapshot other) {
-        snapshot(other.internshipListCopy, other.interviewListCopy, other.aliasMapCopy);
+        snapshot(other.internshipListCopy, other.interviewListCopy, other.aliasMapCopy, other.command);
     }
 
-    public void snapshot(InternshipList internshipList, InterviewList interviewList, Map<String, String> aliasMap) {
+    public void snapshot(InternshipList internshipList, InterviewList interviewList, Map<String, String> aliasMap,
+                         String command) {
+        this.command = command;
         this.internshipListCopy = new InternshipList(internshipList);
         this.interviewListCopy = new InterviewList(interviewList);
         this.aliasMapCopy = new HashMap<>(aliasMap);
     }
-    public void snapshot(OperationSnapshot other) {
-        snapshot(other.internshipListCopy, other.interviewListCopy, other.aliasMapCopy);
-    }
+
     public InternshipList getInternshipListCopy() {
         return internshipListCopy;
     }
@@ -42,5 +42,9 @@ public class OperationSnapshot {
 
     public Map<String, String> getAliasMapCopy() {
         return aliasMapCopy;
+    }
+
+    public String getCommand() {
+        return this.command;
     }
 }

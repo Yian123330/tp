@@ -65,24 +65,31 @@ public class GoldenCompass {
 
         ui.greet();
 
-        operationSnapshot.snapshot(internships, interviews, executor.getAliasMap()); //initialise
+        operationSnapshot.snapshot(internships, interviews, executor.getAliasMap(), "initialise"); //initialise
         operationHistory.saveSnapshot(new OperationSnapshot(operationSnapshot)); //snapshot after initialisation.
 
         while (true) {
             try {
+                String command;
+
                 parser.parse(ui.read());
-                if (parser.getCommand().equals("bye")) {
+                command = parser.getCommand();
+
+                if (command.equals("bye")) {
                     break;
                 }
+
                 executor.execute();
-                if (executor.isUndoable(parser.getCommand())) {
+
+                if (executor.isUndoable(command)) {
                     //first take a photo
-                    operationSnapshot.snapshot(internships, interviews, executor.getAliasMap());
+                    operationSnapshot.snapshot(internships, interviews, executor.getAliasMap(), command);
                     //then store that photo
                     operationHistory.saveSnapshot(new OperationSnapshot(operationSnapshot));
                     //clear redo since there is new changes.
                     operationHistory.clearRedo();
                 }
+
                 internshipStorage.save(internships);
                 interviewStorage.save(interviews);
                 aliasStorage.save(executor.getAliasMap());

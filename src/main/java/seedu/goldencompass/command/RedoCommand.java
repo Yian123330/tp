@@ -37,5 +37,7 @@ public class RedoCommand extends Command implements DataHistory{
         }
 
         modifyDataWith(future, executor, internshipList, interviewList);
+
+        ui.print("Redo " + future.getCommand() + " successfully");
     }
 }
