@@ -17,7 +17,7 @@ import java.util.List;
  * Text matching is case-insensitive substring matching.
  * </p>
  */
-public class SearchInterviewCommand extends CommandClass {
+public class SearchInterviewCommand extends Command {
 
     public static final String COMMAND_WORD = "search-interview";
 
