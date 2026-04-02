@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+
 public class Preparser {
 
     private String command;
@@ -18,7 +19,49 @@ public class Preparser {
         this.flagSet = flagSet;
     }
 
+    /**
+     * Pre-parses a raw command message into a mapping of flags to their parameters.
+     * <p>
+     * The input message is split by whitespace into individual words. The first word
+     * is treated as the command and stored internally in the {@code command} field.
+     * Subsequent words that match entries in {@code flagSet} are treated as flags.
+     * Each flag is mapped to the sequence of words that follow it until the next flag
+     * or the end of the message.
+     * </p>
+     *
+     * <p>
+     * The command itself is treated as a flag at index 0, ensuring that every command
+     * has at least one associated parameter entry. If no parameters follow a flag or
+     * the command, an empty string is stored as its parameter.
+     * </p>
+     *
+     * <p>
+     * This method guarantees that the returned map contains an entry for the command
+     * itself, even when no parameters are provided, in which case the parameter list
+     * contains a single empty string.
+     * </p>
+     *
+     * <p>
+     * Example:
+     * <pre>
+     * Input:  "add Google SWE /date 2026-04-03"
+     * Output: {
+     *     "add"   -> ["Google SWE"],
+     *     "/date" -> ["2026-04-03"]
+     * }
+     *
+     * Input:  "command"
+     * Output: { "command" -> [""] }
+     * </pre>
+     * </p>
+     *
+     * @param message the raw command string entered by the user
+     * @return a map where each key is a command or flag and the value is a list of
+     *         parameters associated with that flag
+     */
     public Map<String, List<String>> preparse(String message) {
+
+        assert message != null : "The message must not be null";
 
         String[] words = message.split("\\s+");
 
@@ -47,156 +90,3 @@ public class Preparser {
     }
 
 }
-//import java.util.ArrayList;
-//import java.util.Arrays;
-//import java.util.List;
-//import java.util.Map;
-//import java.util.HashMap;
-//import java.util.Set;
-//import java.util.stream.Collectors;
-//import java.util.stream.IntStream;
-//
-//import static seedu.goldencompass.parser.Config.ALL_COMMANDS;
-//import static seedu.goldencompass.parser.Config.ALL_FLAGS;
-//import static seedu.goldencompass.parser.Config.COMMAND_WORD_INDEX;
-//import static seedu.goldencompass.parser.Config.DEFAULT_FLAG;
-//import static seedu.goldencompass.parser.Config.FLAG_INDICATOR;
-//
-//import seedu.goldencompass.exception.GoldenCompassException;
-//import seedu.goldencompass.exception.GoldenCompassParsingException;
-//
-///**
-// * Provides methods to parse user input.
-// */
-//public class Preparser {
-//    private String commandWord;
-//    private Map<String, List<String>> flagToParameterMap;
-//
-//
-//
-//
-//    /**
-//     * Parses the userInput
-//     * @param userInput a string to parse
-//     * @throws GoldenCompassParsingException if a command word or a flag is not recognizable
-//     */
-//    public void preparse(String userInput) throws GoldenCompassException {
-//        String[] userInputs = userInput.split("\\s+");
-//        String commandWord = userInputs[COMMAND_WORD_INDEX];
-//        String[] arguments = Arrays.copyOfRange(userInputs, 1, userInputs.length);
-//
-//        this.commandWord = commandWord;
-//        this.flagToParameterMap = findFlags(arguments);
-//
-//        //FlagValidator.checkFlag(flagToParameterMap.keySet(), Config.getCommandFlags(commandWord));
-//    }
-//
-//    /**
-//     * Returns {@code true} if {@code text} is a flag, and {@code false} if it is a parameter.
-//     * <p></p>
-//     * Any {@code text} that starts with {@code -} is expected
-//     * to be a flag.
-//     * @param text a string to be checked against.
-//     * @return {@code true} if {@code text} is a flag, and {@code false} if it is a parameter.
-//     * @throws GoldenCompassParsingException if {@code text} starts with {@code -}
-//     *     but not found in the Set of all flags.
-//     */
-//    private static boolean isFlag(String text) throws GoldenCompassParsingException{
-//
-//        //text not starting with "-" is not a flag
-//        if(!text.startsWith(FLAG_INDICATOR)) {
-//            return false;
-//        }
-//
-//        if(ALL_FLAGS.contains(text)) {
-//            return true;
-//        }
-//
-//        //text with "-" is considered as a flag, but not found in the flag set.
-//        throw new GoldenCompassParsingException("Error: Unknown flag: " + text);
-//    }
-//
-//    /**
-//     * Returns the {@code commandWord}
-//     * @param commandWord a string
-//     * @return the {@code commandWord}
-//     * @throws GoldenCompassParsingException if no command word is found.
-//     */
-//    private static String checkCommandWord(String commandWord) throws GoldenCompassParsingException{
-//        if(!ALL_COMMANDS.contains(commandWord)) {
-//            throw new GoldenCompassParsingException("Error: Command " + commandWord + " does not exist");
-//        }
-//        return commandWord;
-//    }
-//
-//    /**
-//     * Returns a Map from a flag to a list of params pointed by this flag
-//     * @param arguments a string array
-//     * @return a Map from a flag to a list of params pointed by this flag
-//     * @throws GoldenCompassParsingException if a non-recognizable flag is detected or a parameter
-//     *     is not identified by any flag.
-//     * @see Preparser#isFlag(String)
-//     */
-//    private static Map<String, List<String>> findFlags(String[] arguments) throws GoldenCompassParsingException {
-//        String flag = DEFAULT_FLAG;
-//        ArrayList<String> params = new ArrayList<>();
-//        Map<String, List<String>> map = new HashMap<>();
-//
-//        for(String argument : arguments) {
-//            if(isFlag(argument)) {
-//                putToMap(map, flag, String.join(" ", params));
-//                flag = argument;
-//                params = new ArrayList<>();
-//            } else {
-//                //a param
-//                params.add(argument);
-//            }
-//        }
-//
-//        putToMap(map, flag, String.join(" ", params));
-//
-//        return map;
-//    }
-//
-//    /**
-//     * Puts a {@code value} into a list associating with the {@code key}.
-//     * @param map a map from string to list of string
-//     * @param key a flag that is a string.
-//     * @param value a param that is a string.
-//     */
-//    private static void putToMap(Map<String, List<String>> map, String key, String value) {
-//        if(!map.containsKey(key)) {
-//            map.put(key, new ArrayList<>());
-//        }
-//        List<String> params = map.get(key);
-//        params.add(value);
-//    }
-//
-//    /**
-//     * Returns the command word identified by the preparser instance.
-//     * <p>
-//     *     <b>Warning:</b>
-//     *     It can only be called after a {@code Preparser} is instantiated without Exception.
-//     * </p>
-//     * @return the command word identified by the preparser instance.
-//     */
-//    public String getCommandWord() {
-//        return this.commandWord;
-//    }
-//
-//    /**
-//     * Returns a Map of flag to list of parameters identified by the preparser instance.
-//     * <p>
-//     *     There is a possibility of having duplicated occurrences of a flag. So parameters associated with each
-//     *     occurrence is stored as a {@code List<String>}, following the order in which they appear.
-//     * </p>
-//     * <p>
-//     *     <b>Warning:</b>
-//     *     It can only be called after a {@code Preparser} is instantiated without Exception.
-//     * </p>
-//     * @return a Map of flag to list of parameters identified by the preparser instance.
-//     */
-//    public Map<String, List<String>> getFlagToParameterMap() {
-//        return this.flagToParameterMap;
-//    }
-//}

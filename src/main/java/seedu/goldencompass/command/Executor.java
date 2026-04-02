@@ -40,6 +40,7 @@ public class Executor {
                 Map.entry("reject", new RejectOfferCommand(parser, internshipList)),
                 Map.entry("search", new SearchInternshipCommand(parser, internshipList)),
                 Map.entry("search-interview", new SearchInterviewCommand(parser, interviewList)),
+                Map.entry("upcoming", new UpcomingCommand(parser, interviewList)),
                 Map.entry("undo", new UndoCommand(parser, this, internshipList, interviewList,
                         operationHistory)),
                 Map.entry("redo", new RedoCommand(parser, this, internshipList, interviewList,
