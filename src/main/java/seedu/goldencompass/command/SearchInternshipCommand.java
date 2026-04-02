@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.logging.Logger;
 
-/**
- * Represents a command to search for internships by company name or title.
- */
 public class SearchInternshipCommand extends Command {
 
     private static final Logger logger = Logger.getLogger(SearchInternshipCommand.class.getName());
@@ -29,43 +26,28 @@ public class SearchInternshipCommand extends Command {
     public void execute() throws GoldenCompassException {
         logger.info("Executing SearchInternshipCommand");
 
-        // Get search parameters
         List<String> companyParams = parser.getParamsOf(FLAG_COMPANY);
         List<String> titleParams = parser.getParamsOf(FLAG_TITLE);
 
         String companySearch = (companyParams != null && !companyParams.isEmpty())
-                ? companyParams.get(0).trim().toLowerCase() : null;
+                ? companyParams.get(0).trim() : null;
         String titleSearch = (titleParams != null && !titleParams.isEmpty())
-                ? titleParams.get(0).trim().toLowerCase() : null;
+                ? titleParams.get(0).trim() : null;
 
-        // Validate at least one search parameter
         if ((companySearch == null || companySearch.isEmpty())
                 && (titleSearch == null || titleSearch.isEmpty())) {
             throw new GoldenCompassException(
                     "Please provide at least one search criteria!\n"
                             + "Usage: search [/c COMPANY] [/t TITLE]\n"
                             + "Example: search /c Google\n"
-                            + "Example: search /t Engineer\n"
-                            + "Example: search /c Google /t Software");
+                            + "Example: search /t Engineer");
         }
 
-        // Perform search
+        // Use the matches() method
         List<Internship> results = internshipList.getInternships().stream()
-                .filter(internship -> {
-                    boolean matches = true;
-                    if (companySearch != null && !companySearch.isEmpty()) {
-                        matches = matches && internship.getCompanyName()
-                                .toLowerCase().contains(companySearch);
-                    }
-                    if (titleSearch != null && !titleSearch.isEmpty()) {
-                        matches = matches && internship.getTitle()
-                                .toLowerCase().contains(titleSearch);
-                    }
-                    return matches;
-                })
+                .filter(internship -> internship.matches(companySearch, titleSearch))
                 .collect(Collectors.toList());
 
-        // Display results
         if (results.isEmpty()) {
             ui.print("No internships found matching your search criteria.");
             logger.info("Search found 0 results");
@@ -74,8 +56,7 @@ public class SearchInternshipCommand extends Command {
 
         ui.print("Found " + results.size() + " matching internship(s):");
         for (int i = 0; i < results.size(); i++) {
-            Internship intern = results.get(i);
-            ui.print((i + 1) + ". " + intern.getCompanyName() + " - " + intern.getTitle());
+            ui.print((i + 1) + ". " + results.get(i).toString());
         }
 
         logger.info("Search found " + results.size() + " results");
