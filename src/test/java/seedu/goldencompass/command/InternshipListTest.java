@@ -28,6 +28,7 @@ public class InternshipListTest {
     public void setUp() throws Exception{
         internshipList = new InternshipList();
         Parser parser = new Parser();
+        parser.parse("list");
         listCommand = new ListCommand(parser, internshipList);
         //internshipList.setUi(new Ui());
         // Redirect System.out to capture output for testing
