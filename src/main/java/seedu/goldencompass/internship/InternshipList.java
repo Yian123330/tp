@@ -25,11 +25,11 @@ public class InternshipList {
     /**
      * Constructs an InternshipList with existing data.
      *
-     * @param internships The list of internships to load
+     * @param loadedInternships The list of internships loaded from the save file.
      */
-    public InternshipList(List<Internship> internships) {
-        if (internships != null) {
-            this.internships.addAll(internships);
+    public InternshipList(List<Internship> loadedInternships) {
+        if (loadedInternships != null) {
+            this.internships.addAll(loadedInternships);
         }
         logger.info("InternshipList created with " + this.internships.size() + " internships");
     }
