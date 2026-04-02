@@ -19,16 +19,6 @@ public class ListCommand extends Command {
     /** Reference to the internship list to display */
     private final InternshipList internshipList;
 
-    @Override
-    public String getCommandDescription() {
-        return "";
-    }
-
-    @Override
-    public String getFlagDescription() {
-        return "";
-    }
-
     /**
      * Constructs a ListCommand with the specified internship list.
      *
@@ -46,6 +36,16 @@ public class ListCommand extends Command {
 
         // Assertion to verify state
         assert this.internshipList != null : "InternshipList should be set";
+    }
+
+    @Override
+    public String getCommandDescription() {
+        return "";
+    }
+
+    @Override
+    public String getFlagDescription() {
+        return "";
     }
 
     /**
