@@ -36,12 +36,13 @@ import java.util.stream.IntStream;
 public class Parser {
 
     private static final Logger logger = Logger.getLogger(Parser.class.getName());
-    private String command;
-    private Map<String, List<String>> flagToParamMap;
 
     /** Set of valid flags recognized by the parser. */
     private static final Set<String> FLAGSET =
             Set.of("/t", "/d", "/c", "/a", "/help");
+
+    private String command;
+    private Map<String, List<String>> flagToParamMap;
 
     /**
      * Parses a raw user input into a mapping of flags to their parameters.
