@@ -85,7 +85,8 @@ public class SetInterviewDeadlineCommand extends Command {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             date = LocalDateTime.parse(dateParam, formatter);
         } catch (DateTimeParseException e) {
-            throw new GoldenCompassException("Error: Invalid date format, expected yyyy-MM-dd HH:mm, got: " + dateParam);
+            throw new GoldenCompassException(
+                    "Error: Invalid date format, expected yyyy-MM-dd HH:mm, got: " + dateParam);
         }
 
         assert date != null : "Parsed date should not be null";

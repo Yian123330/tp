@@ -37,7 +37,8 @@ public class ListInterviewCommandTest {
     @Test
     public void list_singleInterview_printsCorrectly() throws GoldenCompassException {
 
-        interviewList.add(new Interview(new Internship("Software Engineer", "Google"), LocalDateTime.parse("2026-03-25T09:00")));
+        Internship google = new Internship("Software Engineer", "Google");
+        interviewList.add(new Interview(google, LocalDateTime.parse("2026-03-25T09:00")));
 
         listInterviewCommand.execute();
 
@@ -51,10 +52,14 @@ public class ListInterviewCommandTest {
     @Test
     public void list_multipleInterviews_printsAllCorrectly() throws GoldenCompassException {
 
-        interviewList.add(new Interview(new Internship("Software Engineer", "Google"), LocalDateTime.parse("2026-03-31T10:00")));
-        interviewList.add(new Interview(new Internship("Frontend Developer", "Meta"), LocalDateTime.parse("2026-03-25T14:00")));
-        interviewList.add(new Interview(new Internship("Backend Developer", "Amazon"), LocalDateTime.parse("2026-04-01T09:00")));
-        interviewList.add(new Interview(new Internship("Bus Driver", "NUS"), LocalDateTime.parse("2026-02-26T11:00")));
+        Internship google = new Internship("Software Engineer", "Google");
+        Internship meta = new Internship("Frontend Developer", "Meta");
+        Internship amazon = new Internship("Backend Developer", "Amazon");
+        Internship nus = new Internship("Bus Driver", "NUS");
+        interviewList.add(new Interview(google, LocalDateTime.parse("2026-03-31T10:00")));
+        interviewList.add(new Interview(meta, LocalDateTime.parse("2026-03-25T14:00")));
+        interviewList.add(new Interview(amazon, LocalDateTime.parse("2026-04-01T09:00")));
+        interviewList.add(new Interview(nus, LocalDateTime.parse("2026-02-26T11:00")));
 
         listInterviewCommand.execute();
 
