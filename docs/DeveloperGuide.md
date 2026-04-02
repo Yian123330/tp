@@ -282,9 +282,10 @@ The user can list upcoming interviews within a specific number of days.
 This lists all upcoming interviews within the following `N` days. If the optional parameter `[N]` is omitted, a default 
 of `5` days will be used. That is, `upcoming` will list all upcoming interviews within the subsequent `5` days.
 
+Note: negative `N` is allowed but will always output `You don't have any upcoming interviews.`
 #### Implementation
 
-The feature is implemented in `ListInterviewCommand`, the relationship of which to other classes is shown in the following class diagram 
+The feature is implemented in `UpcomingCommand`, the relationship of which to other classes is shown in the following class diagram 
 
 ![List Interview Class Diagram](diagrams/ListInterviewClassDiagram.png)
 
