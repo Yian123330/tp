@@ -10,7 +10,6 @@ import seedu.goldencompass.parser.Parser;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.logging.Level;
 
 public class DeleteInterviewCommand extends Command {
 
