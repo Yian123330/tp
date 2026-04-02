@@ -18,6 +18,10 @@ public class DeleteInternshipCommand extends Command {
 
     public DeleteInternshipCommand(Parser parser, InternshipList internshipList, InterviewList interviewList) {
         super(parser);
+
+        assert parser != null : "Parser passed to DeleteInternshipCommand cannot be null";
+        assert internshipList != null : "InternshipList passed to DeleteInternshipCommand cannot be null";
+
         this.internshipList = internshipList;
         this.interviewList = interviewList;  // ADD THIS
     }
