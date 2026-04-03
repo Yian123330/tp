@@ -131,17 +131,12 @@ public class Parser {
      * Returns the list of parameters associated with a specific flag.
      *
      * @param flag the flag or command string to retrieve parameters for
-     * @return list of parameters associated with the flag
-     * @throws GoldenCompassException if the flag does not exist in the parsed input
+     * @return null or list of parameters associated with the flag
      */
-    public List<String> getParamsOf(String flag) throws GoldenCompassException {
+    public List<String> getParamsOf(String flag) {
         assert flag != null : "Flag must not be null";
         assert flagToParamMap != null : "parse() must be called before getParamsOf()";
-        try {
-            return flagToParamMap.get(flag);
-        }  catch (NullPointerException e) {
-            throw new GoldenCompassException("The flag is not found in the user input.");
-        }
+        return flagToParamMap.get(flag);
     }
 
     /**
