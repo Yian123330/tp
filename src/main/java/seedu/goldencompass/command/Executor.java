@@ -7,17 +7,19 @@ import seedu.goldencompass.operation.OperationHistory;
 import seedu.goldencompass.parser.Parser;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class Executor {
+    private static final Set<String> UNDOABLE=Set.of("add", "update-date", "add-interview", "alias", "remove-alias", "mark",
+            "delete", "delete-interview", "reject", "clear-rejected");
 
     private final Map<String, String> aliasMap = new HashMap<>();
 
     private final Map<String, Command> commands;
     private final Parser parser;
-    private final Set<String> undoable=Set.of("add", "update-date", "add-interview", "alias", "remove-alias", "mark",
-            "delete", "reject");
+    private final Set<String> undoable;
 
 
     public Executor(Parser parser, InternshipList internshipList, InterviewList interviewList,
@@ -49,8 +51,10 @@ public class Executor {
         );
 
         //copy the key of commands into alias map
-
         commands.keySet().forEach(key -> aliasMap.put(key, key));
+
+        //copy the set of undoable command into set of undoable alias
+        undoable = new HashSet<>(UNDOABLE);
     }
 
     public void execute() throws GoldenCompassException {
@@ -94,7 +98,13 @@ public class Executor {
             throw new GoldenCompassException("Error: Alias \"" + alias + "\" already exists.");
         }
 
+        //register that alias
         aliasMap.put(alias, command);
+
+        //register the alias as undoable if it is
+        if(UNDOABLE.contains(command)) {
+            undoable.add(alias);
+        }
     }
 
     public void removeAlias(String alias) throws GoldenCompassException{
@@ -115,7 +125,11 @@ public class Executor {
             throw new GoldenCompassException("Error: Cannot remove default command: \"" + alias +"\"");
         }
 
+        //remove the alias from registry
         aliasMap.remove(alias);
+
+        //remove the alias from undoable registry if it is undoable
+        undoable.remove(alias);
     }
 
     public Map<String, String> getAliasMap() {
