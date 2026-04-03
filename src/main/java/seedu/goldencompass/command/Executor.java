@@ -12,8 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class Executor {
-    private static final Set<String> UNDOABLE=Set.of("add", "update-date", "add-interview", "alias", "remove-alias", "mark",
-            "delete", "delete-interview", "reject", "clear-rejected");
+    private static final Set<String> UNDOABLE=Set.of("add", "update-date", "add-interview", "alias",
+            "remove-alias", "mark", "delete", "delete-interview", "reject", "clear-rejected");
 
     private final Map<String, String> aliasMap = new HashMap<>();
 
