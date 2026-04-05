@@ -55,6 +55,7 @@ public class GoldenCompass {
 
         for (Handler h : rootLogger.getHandlers()) {
             h.setLevel(Level.WARNING);
+            h.setEncoding("UTF-8");
         }
         new GoldenCompass().run();
 
