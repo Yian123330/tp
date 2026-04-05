@@ -165,7 +165,7 @@ class DeleteInternshipCommandTest {
         assertEquals(0, interviewList.size());
 
         String output = outputStream.toString();
-        assertTrue(output.contains("✓ Deleted internship: Google - Software Engineer"));
+        assertTrue(output.contains("Deleted internship: Google - Software Engineer"));
     }
 
     @Test
@@ -188,7 +188,7 @@ class DeleteInternshipCommandTest {
         assertEquals(0, interviewList.size());
 
         String output = outputStream.toString();
-        assertTrue(output.contains("✓ Deleted internship: Google - Software Engineer"));
+        assertTrue(output.contains("Deleted internship: Google - Software Engineer"));
     }
 
     @Test
@@ -255,6 +255,6 @@ class DeleteInternshipCommandTest {
         assertEquals("Google", internshipList.get(0).getCompanyName());
 
         String output = outputStream.toString();
-        assertTrue(output.contains("✓ Deleted internship: Meta - Frontend Developer"));
+        assertTrue(output.contains("Deleted internship: Meta - Frontend Developer"));
     }
 }
