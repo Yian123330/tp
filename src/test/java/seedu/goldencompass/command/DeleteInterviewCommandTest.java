@@ -66,7 +66,7 @@ class DeleteInterviewCommandTest {
 
         // Verify output message
         String output = outputStream.toString();
-        assertTrue(output.contains("✓ Deleted interview for Google"));
+        assertTrue(output.contains("Deleted interview for Google"));
     }
 
     @Test
@@ -182,7 +182,7 @@ class DeleteInterviewCommandTest {
         assertNotNull(meta.getInterview());
 
         String output = outputStream.toString();
-        assertTrue(output.contains("✓ Deleted interview for Google"));
+        assertTrue(output.contains("Deleted interview for Google"));
         assertFalse(output.contains("Meta"));
     }
 }
