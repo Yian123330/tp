@@ -9,6 +9,13 @@ public class Interview {
     protected Internship internship;
     protected LocalDateTime dateTime;
 
+    public static Interview copyOf(Interview other) {
+        if(other == null) {
+            return null;
+        }
+        return new Interview(other);
+    }
+
     public Interview(Internship internship, LocalDateTime date) {
         assert internship != null : "Internship should not be null";
         assert date != null : "Date should not be null when provided";
@@ -24,10 +31,16 @@ public class Interview {
         internship.setInterview(this);
     }
 
+    /**
+     * Copy constructor that does not copy internship field
+     * @param other other
+     */
     public Interview(Interview other) {
-        this.internship = other.internship;
+
         this.dateTime = other.dateTime;
     }
+
+
 
     /**
      * Sets the deadline date and time of this interview.
@@ -83,4 +96,7 @@ public class Interview {
         return true;
     }
 
+    public void setInternship(Internship internship) {
+        this.internship = internship;
+    }
 }

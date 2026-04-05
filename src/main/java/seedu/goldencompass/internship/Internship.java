@@ -22,6 +22,12 @@ public class Internship {
     // 2. Group all PRIVATE variables together
     private ApplicationStatus status;
 
+    public static Internship copyOf(Internship other) {
+        if(other == null) {
+            return null;
+        }
+        return new Internship(other);
+    }
 
     /**
      * Constructs a new Internship with the specified title and company.
@@ -68,13 +74,17 @@ public class Internship {
                 + " - " + this.title);
     }
 
+    /**
+     * Copy constructor that does not copy interview field
+     * @param other other
+     */
     public Internship(Internship other) {
         this.title = other.title;
         this.companyName = other.companyName;
         this.comments = other.comments;
         this.link = other.link;
         this.hasApplied = other.hasApplied;
-        this.interview = other.interview;
+
         this.status = other.status;
     }
 
