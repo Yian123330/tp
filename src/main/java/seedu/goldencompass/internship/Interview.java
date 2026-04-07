@@ -9,12 +9,7 @@ public class Interview {
     protected Internship internship;
     protected LocalDateTime dateTime;
 
-    public static Interview copyOf(Interview other) {
-        if(other == null) {
-            return null;
-        }
-        return new Interview(other);
-    }
+
 
     public Interview(Internship internship, LocalDateTime date) {
         assert internship != null : "Internship should not be null";
@@ -40,7 +35,12 @@ public class Interview {
         this.dateTime = other.dateTime;
     }
 
-
+    public static Interview copyOf(Interview other) {
+        if(other == null) {
+            return null;
+        }
+        return new Interview(other);
+    }
 
     /**
      * Sets the deadline date and time of this interview.
