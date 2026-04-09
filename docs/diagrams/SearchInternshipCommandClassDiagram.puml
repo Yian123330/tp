@@ -1,43 +1,40 @@
 @startuml
+hide circle
 skinparam classAttributeIconSize 0
-skinparam shadowing false
-
-class SearchInternshipCommand {
-    - InternshipList internshipList
-    + SearchInternshipCommand(Parser, InternshipList)
-    + execute()
-    + getCommandDescription()
-    + getFlagDescription()
+skinparam class {
+    BackgroundColor #ADD1B2
+    ArrowColor #2A2A2A
+    BorderColor #2A2A2A
 }
 
-class Command {
-    # Ui ui
-    # Parser parser
-    + Command()
-    + Command(Parser)
-    + execute()
-    # getCommandDescription()
-    # getFlagDescription()
-    # printHelp()
+abstract class Command {
+  # parser: Parser
+  # ui: Ui
+  + execute() : void
+}
+
+class SearchInternshipCommand {
+  - internshipList: InternshipList
+  + execute() : void
 }
 
 class InternshipList {
-    - List<Internship> internships
-    + getInternships()
-    + getSize()
+  - internships: List<Internship>
+  + getInternships() : List<Internship>
+  + getSize() : int
 }
 
 class Internship {
-    - String title
-    - String companyName
-    - ApplicationStatus status
-    + getTitle()
-    + getCompanyName()
-    + matches(String, String)
-    + toString()
+  - title: String
+  - companyName: String
+  - status: ApplicationStatus
+  + getCompanyName() : String
+  + getTitle() : String
+  + matches(keyword: String, field: String) : boolean
+  + toString() : String
 }
 
-SearchInternshipCommand --|> Command
-SearchInternshipCommand --> InternshipList
-InternshipList o--> Internship
+Command <|-- SearchInternshipCommand
+SearchInternshipCommand --> "1" InternshipList
+InternshipList o--> "many" Internship
 @enduml
