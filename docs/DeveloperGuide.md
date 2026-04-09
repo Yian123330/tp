@@ -12,23 +12,20 @@ PlantUML: Used to generate the sequence and class diagrams throughout the Develo
 
 ### Instructional Resources
 CS2113 Course Website: For providing the guidelines on software engineering principles, testing standards, and documentation formats used in this project.
-## Design & implementation
+## Design
 
-### Internship Management — Class Overview
+### Architecture
 
-The following class diagram shows the key classes involved in internship management and their relationships.
+![Architecture](diagrams/Architecture-GoldenCompass.png)
 
-Each `AddInternshipCommand` holds a reference to the `Parser` and the `InternshipList`.
-The command relies on the `Parser` to extract user inputs and writes the newly created `Internship` directly to the `InternshipList`.
+### Parser component
 
-### The Parser Class
-
-The class `Parser` has an immutable class-level attribute `Set<String> FLAGSET` and 
-two mutable private attributes `String command, Map<String, List<String>> flagToParamMap`. 
-The essential method of `Parser` is `parse(String userInput)` which parses a string of user input 
+The class `Parser` has an immutable class-level attribute `Set<String> FLAGSET` and
+two mutable private attributes `String command, Map<String, List<String>> flagToParamMap`.
+The essential method of `Parser` is `parse(String userInput)` which parses a string of user input
 and stores the result into the attribute `flagToParamMap`. The keys of this map comprise the
-first word of the user input (also stored in `command`) and words that are identified as flags in 
-the `FLAGSET`. The value in this map corresponding to each key word is the parameter string 
+first word of the user input (also stored in `command`) and words that are identified as flags in
+the `FLAGSET`. The value in this map corresponding to each key word is the parameter string
 associated with that key, stored as a `List<String>`, where `List` is used to support duplicated flags.
 The class provides getters to get `String command` and `Map<String, List<String>> flagToParamMap`.
 
@@ -38,17 +35,17 @@ More specifically, the parsing procedure works as follows:
 
 2. The first word is treated as the command and stored in command.
 
-3. All occurrences of valid flags defined in `FLAGSET` are identified and their indices in the word array 
-are collected using `IntStream`.
+3. All occurrences of valid flags defined in `FLAGSET` are identified and their indices in the word array
+   are collected using `IntStream`.
 
 4. The indices are used to partition the word array into segments, where each segment corresponds to a key
-(command or flag) and its associated parameter string.
+   (command or flag) and its associated parameter string.
 
-5. Each segment is converted into a `Map.Entry<String, String>`, where the key is the command or flag and 
-the value is the concatenated parameter string.
+5. Each segment is converted into a `Map.Entry<String, String>`, where the key is the command or flag and
+   the value is the concatenated parameter string.
 
-6. The entries are grouped using `Collectors.groupingBy `to form the final `flagToParamMap`, where 
-duplicated flags result in multiple parameter strings stored in a list.
+6. The entries are grouped using `Collectors.groupingBy `to form the final `flagToParamMap`, where
+   duplicated flags result in multiple parameter strings stored in a list.
 
 This design ensures that:
 
@@ -113,12 +110,26 @@ flagToParamMap =
 
 `Parser` also has a method `public List<String> getParamsOf(String flag)`, which returns the value corresponding
 to the key `flag` in the `flagToParamMap`. Importantly, it returns `null` if `flag` does not exist in the key set
-of `flagToParamMap`. Thus, it is recommended to check whether this method returns `null`, in which case, if the `flag`
-is optional, the execution should skip, and if the `flag` is essential, a `GoldenCompassException` should be thrown.
+of `flagToParamMap`. Thus, it is recommended to call the method `isFlagExist()` to check the existence of the flag
+in the user input. If it returns `false`, then the execution of a command should skip or throw a 
+`GoldenCompassException` depending on whether the flag is essential for the command.
 
 Below is the sequence diagram illustrating the `class Parser`:
 
 ![Parser Sequence Diagram](diagrams/ParserSequenceDiagram.png)
+
+### Executor & Command component
+
+![Executor and Command Class Diagram](diagrams/ExecutorClassDiagram.png)
+
+## Implementation
+
+### Internship Management — Class Overview
+
+The following class diagram shows the key classes involved in internship management and their relationships.
+
+Each `AddInternshipCommand` holds a reference to the `Parser` and the `InternshipList`.
+The command relies on the `Parser` to extract user inputs and writes the newly created `Internship` directly to the `InternshipList`.
 
 ### Add Internship Feature
 
@@ -931,7 +942,7 @@ logger.log(Level.INFO, "Deleted associated interview for: " + internship.getComp
 | `execute_someRejected_clearsOnlyRejected` | Mix of rejected and non-rejected | Only rejected entries removed |
 | `execute_emptyList_printsNoRejected` | Clear on empty list | No error, message printed |
 
-### Feature: Listing Upcoming Interviews
+### List upcoming interviews
 
 #### Overview
 
