@@ -23,6 +23,7 @@ public class Internship {
     private ApplicationStatus status;
 
 
+
     /**
      * Constructs a new Internship with the specified title and company.
      * Sets hasApplied to true by default.
@@ -68,14 +69,25 @@ public class Internship {
                 + " - " + this.title);
     }
 
+    /**
+     * Copy constructor that does not copy interview field
+     * @param other other
+     */
     public Internship(Internship other) {
         this.title = other.title;
         this.companyName = other.companyName;
         this.comments = other.comments;
         this.link = other.link;
         this.hasApplied = other.hasApplied;
-        this.interview = other.interview;
+
         this.status = other.status;
+    }
+
+    public static Internship copyOf(Internship other) {
+        if(other == null) {
+            return null;
+        }
+        return new Internship(other);
     }
 
     /**
