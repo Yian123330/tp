@@ -1,63 +1,59 @@
 @startuml
+hide circle
 skinparam classAttributeIconSize 0
-skinparam shadowing false
-
-class DeleteInterviewCommand {
-    - InternshipList internshipList
-    - InterviewList interviewList
-    + DeleteInterviewCommand(Parser, InternshipList, InterviewList)
-    + execute()
-    + getCommandDescription()
-    + getFlagDescription()
+skinparam class {
+    BackgroundColor #ADD1B2
+    ArrowColor #2A2A2A
+    BorderColor #2A2A2A
 }
 
-class Command {
-    # Ui ui
-    # Parser parser
-    + Command()
-    + Command(Parser)
-    + execute()
-    # getCommandDescription()
-    # getFlagDescription()
-    # printHelp()
+abstract class Command {
+  # parser: Parser
+  # ui: Ui
+  + execute() : void
+}
+
+class DeleteInterviewCommand {
+  - internshipList: InternshipList
+  - interviewList: InterviewList
+  + execute() : void
 }
 
 class InternshipList {
-    - List<Internship> internships
-    + getInternships()
-    + getSize()
-    + get(index)
+  - internships: List<Internship>
+  + get(index: int) : Internship
+  + getInternships() : List<Internship>
+  + getSize() : int
 }
 
 class InterviewList {
-    - List<Interview> interviews
-    + getInterviews()
-    + deleteByInternship(Internship)
-    + size()
+  - interviews: List<Interview>
+  + deleteByInternship(internship: Internship) : void
+  + getInterviews() : List<Interview>
+  + size() : int
 }
 
 class Internship {
-    - String title
-    - String companyName
-    - Interview interview
-    + getCompanyName()
-    + getTitle()
-    + getInterview()
-    + deleteInterview()
+  - title: String
+  - companyName: String
+  - interview: Interview
+  + getCompanyName() : String
+  + getTitle() : String
+  + getInterview() : Interview
+  + deleteInterview() : void
 }
 
 class Interview {
-    - Internship internship
-    - LocalDateTime dateTime
-    + getInternship()
-    + getDate()
-    + getInternship()
+  - internship: Internship
+  - dateTime: LocalDateTime
+  + getDate() : LocalDateTime
+  + getInternship() : Internship
 }
 
-DeleteInterviewCommand --|> Command
-DeleteInterviewCommand --> InternshipList
-DeleteInterviewCommand --> InterviewList
-InternshipList o--> Internship
-InterviewList o--> Interview
-Internship --> Interview
+Command <|-- DeleteInterviewCommand
+DeleteInterviewCommand --> "1" InternshipList
+DeleteInterviewCommand --> "1" InterviewList
+InternshipList o--> "many" Internship
+InterviewList o--> "many" Interview
+Internship --> "0..1" Interview
 @enduml

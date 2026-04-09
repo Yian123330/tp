@@ -1,45 +1,42 @@
 @startuml
+hide circle
 skinparam classAttributeIconSize 0
-skinparam shadowing false
-
-class ListCommand {
-    - InternshipList internshipList
-    + ListCommand(Parser, InternshipList)
-    + execute()
-    + getCommandDescription()
-    + getFlagDescription()
+skinparam class {
+    BackgroundColor #ADD1B2
+    ArrowColor #2A2A2A
+    BorderColor #2A2A2A
 }
 
-class Command {
-    # Ui ui
-    # Parser parser
-    + Command()
-    + Command(Parser)
-    + execute()
-    # getCommandDescription()
-    # getFlagDescription()
-    # printHelp()
+abstract class Command {
+  # parser: Parser
+  # ui: Ui
+  + execute() : void
+}
+
+class ListCommand {
+  - internshipList: InternshipList
+  + execute() : void
 }
 
 class InternshipList {
-    - List<Internship> internships
-    + getInternships()
-    + getSize()
-    + get(index)
-    + add(Internship)
-    + delete(index)
+  - internships: List<Internship>
+  + add(internship: Internship) : void
+  + delete(index: int) : void
+  + get(index: int) : Internship
+  + getInternships() : List<Internship>
+  + getSize() : int
 }
 
 class Internship {
-    - String title
-    - String companyName
-    - ApplicationStatus status
-    + getTitle()
-    + getCompanyName()
-    + toString()
+  - title: String
+  - companyName: String
+  - status: ApplicationStatus
+  + getCompanyName() : String
+  + getTitle() : String
+  + toString() : String
 }
 
-ListCommand --|> Command
-ListCommand --> InternshipList
-InternshipList o--> Internship
+Command <|-- ListCommand
+ListCommand --> "1" InternshipList
+InternshipList o--> "many" Internship
 @enduml
