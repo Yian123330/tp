@@ -1,7 +1,6 @@
 package seedu.goldencompass.command;
 
 import seedu.goldencompass.exception.GoldenCompassException;
-import seedu.goldencompass.internship.Interview;
 import seedu.goldencompass.internship.InterviewList;
 import seedu.goldencompass.parser.Parser;
 
@@ -9,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -128,11 +126,7 @@ public class SetInterviewDeadlineCommand extends Command {
                             + "Please provide a future date.");
         }
 
-        Interview interview = interviewList.get(index - 1);
-        assert interview != null : "Retrieved interview should not be null";
-
-        interview.setDate(date);
-        interviewList.getInterviews().sort(Comparator.comparing(Interview::getDate));
+        interviewList.setDateFor(index - 1, date);
 
         logger.log(Level.INFO, "Successfully updated interview " + index + " to " + date);
         ui.print("Deadline set for interview " + index + ": " + date);
