@@ -113,6 +113,13 @@ public class SetInterviewDeadlineCommand extends Command {
 
         assert date != null : "Parsed date should not be null";
 
+        if (date.isBefore(LocalDateTime.now())) {
+            logger.log(Level.WARNING, "Failed to update date: date is in the past.");
+            throw new GoldenCompassException(
+                    "Error: Interview date " + dateParam + " is in the past. "
+                            + "Please provide a future date.");
+        }
+
         List<Interview> sortedInterviews = interviewList.getInterviews().stream()
                 .sorted(Comparator.comparing(Interview::getDate))
                 .toList();

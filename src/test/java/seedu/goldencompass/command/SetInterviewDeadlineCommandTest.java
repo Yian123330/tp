@@ -119,4 +119,16 @@ public class SetInterviewDeadlineCommandTest {
                     + "Usage: update-date INDEX /d DATE", e.getMessage());
         }
     }
+
+    @Test
+    public void execute_pastDate_exceptionThrown() throws GoldenCompassException {
+        parser.parse("update-date 1 /d 2020-01-01 10:00");
+        try {
+            setDeadlineCommand.execute();
+            fail();
+        } catch (GoldenCompassException e) {
+            assertEquals("Error: Interview date 2020-01-01 10:00 is in the past. "
+                    + "Please provide a future date.", e.getMessage());
+        }
+    }
 }
