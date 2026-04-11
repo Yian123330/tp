@@ -40,10 +40,17 @@ else index format valid
 
         Cmd -> Intern : markAsOffer()
         activate Intern
-        Intern --> Cmd
-        deactivate Intern
 
-        Cmd -> Cmd : ui.print("HUGE CONGRATS! Marked this internship...")
+        ' 🛠️ CHANGED: Added the FSM validation logic here
+        alt invalid state (already offered or rejected)
+            Intern --> Cmd : throw IllegalStateException
+            Cmd -> User : throw GoldenCompassException
+        else valid state
+            Intern --> Cmd : returns successfully
+            deactivate Intern
+
+            Cmd -> Cmd : ui.print("HUGE CONGRATS! Marked this internship...")
+        end
     end
 end
 

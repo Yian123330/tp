@@ -287,6 +287,7 @@ Suppose you have added an internship and accidentally undone that, you want to r
 ```
 redo
 ```
+
 ### Marking an internship application as offer received: `mark`
 
 Updates the status of an existing internship application in your tracker to indicate that you have successfully received an offer.
@@ -295,15 +296,26 @@ Updates the status of an existing internship application in your tracker to indi
 
 * `INDEX` refers to the index number shown in the displayed internship list.
 * The index **must be a positive integer** (e.g., 1, 2, 3, ...).
+* **Constraint:** You cannot mark an internship that is already tagged as `[OFFER RECEIVED]` or `[REJECTED]`.
 
 **Examples:**
 * `list` followed by `mark 4`
   Marks the 4th internship in the current list as having an offer.
 
-**Expected Output:**
+**Expected Output (Success):**
 ```text
 HUGE CONGRATS! Marked this internship as [OFFER RECEIVED]:
   Grab - Software Engineer [OFFER RECEIVED]
+```
+
+**Expected Output (Error - Already Offered):**
+```text
+Error: This internship is already marked as OFFER RECEIVED!
+```
+
+**Expected Output (Error - Already Rejected):**
+```text
+Error: You cannot mark an internship that has already been rejected!
 ```
 
 ### Marking an internship application as rejected: `reject`
@@ -314,17 +326,23 @@ Updates the status of an existing internship application to indicate that it is 
 
 * `INDEX` refers to the index number shown in the displayed internship list.
 * The index **must be a positive integer** (e.g., 1, 2, 3, ...).
+* **Constraint:** You cannot reject an internship that is already tagged as `[REJECTED]`.
+* **Note:** You *can* reject an internship that is currently tagged as `[OFFER RECEIVED]` if you decide to decline their offer!
 
 **Examples:**
 * `list` followed by `reject 4`
   Marks the 4th internship in the current list as rejected.
 
-**Expected Output:**
+**Expected Output (Success):**
 ```text
 Rejection builds character! Marked this internship as [REJECTED]:
   Grab - Software Engineer [REJECTED] 
 ```
 
+**Expected Output (Error - Already Rejected):**
+```text
+Error: This internship has already been rejected!
+```
 ### Saving the data
 
 GoldenCompass saves your data to your hard disk automatically after any command that changes the data. There is no need to save manually!
