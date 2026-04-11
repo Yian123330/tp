@@ -139,9 +139,8 @@ When the user enters `add Grab /t Software Engineer`, the execution flow is as f
 7. The command then performs deep validation to ensure both the company name and title are between 2 and 40 characters long, and contain only alphanumeric characters, spaces, or commas. Any violations are appended to the `StringBuilder`.
 8. If the `StringBuilder` is not empty after deep validation, a `GoldenCompassException` is thrown.
 9. If all validations pass, a new `Internship` object is instantiated using the parsed company name and title.
-10. The command iterates through the existing `InternshipList` using the overridden `equals()` method to ensure an identical internship (case-insensitive) does not already exist. If a duplicate is found, a `GoldenCompassException` is thrown.
-11. The command calls `internshipList.add(newInternship)` to store the application in memory.
-12. The command logs the successful creation and prints a confirmation message to the user via the `Ui`.
+10. The command calls `internshipList.add(newInternship)` to store the application in memory. The list strictly encapsulates its data by checking for duplicates internally (case-insensitive) and throwing an `IllegalArgumentException` if an identical internship already exists, which the command then catches and rethrows as a `GoldenCompassException`.
+11. The command logs the successful creation and prints a confirmation message to the user via the `Ui`.
 
 The following class diagram shows the main structural components involved in the add internship feature:
 
@@ -162,7 +161,7 @@ The command implements an accumulated validation strategy alongside deep string 
 | **Title Presence** | Ensures the text following the `/t` flag is not blank                      | "Internship title cannot be empty!" |
 | **Length Validation** | Enforces minimum (2) and maximum (40) character limits                     | "Input exceeds maximum allowed length of 40 characters!" |
 | **Character Filtering** | Restricts input to alphanumeric characters, spaces, and commas             | "Only alphanumeric characters and commas ',' are permitted." |
-| **Duplicate Prevention** | Checks existing entries using `equals()` to prevent identical internships (case-insensitive matching) | "Warning: This internship already exists in your list!" |
+| **Duplicate Prevention** | Handled internally by `InternshipList#add()`, which checks existing entries using `equals()` to strictly encapsulate and prevent identical internships (case-insensitive matching). | "Warning: This internship already exists in your list!" |
 
 #### Defensive Programming Features
 
@@ -211,6 +210,7 @@ The feature is covered by comprehensive unit tests to ensure all edge cases and 
 | `execute_companyNameTooShort_throwsException` | Execute `add S /t SWE` | Throws `Exception` for failing minimum length constraint |
 | `execute_companyNameTooLong_throwsException` | Execute `add [41 chars] /t SWE` | Throws `Exception` for failing maximum length constraint |
 | `execute_invalidSpecialCharacters_throwsException` | Execute `add Meta \| Google /t SWE` | Throws `Exception` for containing invalid symbols |
+
 ### List Command
 
 #### Overview
