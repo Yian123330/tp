@@ -27,12 +27,13 @@ public class MarkOfferCommand extends Command {
 
     @Override
     public String getCommandDescription() {
-        return "";
+        return "Marks an existing internship application as [OFFER RECEIVED].\n"
+                + "Format: mark INDEX";
     }
 
     @Override
     public String getFlagDescription() {
-        return "";
+        return "This command does not take any flags.";
     }
 
     /**
@@ -74,16 +75,11 @@ public class MarkOfferCommand extends Command {
         // Get the internship (0-indexed)
         Internship internship = internshipList.get(index - 1);
 
-        if (internship.hasOffer()) {
-            throw new GoldenCompassException("Error: This internship is already marked as OFFER RECEIVED!");
+        try {
+            internship.markAsOffer();
+        } catch (IllegalStateException e) {
+            throw new GoldenCompassException(e.getMessage());
         }
-
-        if (internship.isRejected()) {
-            throw new GoldenCompassException("Error: You cannot mark an internship that has already been rejected!");
-        }
-
-        // Mark it as offered!
-        internship.markAsOffer();
 
         logger.log(Level.INFO, "Successfully marked internship as offer received.");
         ui.print("HUGE CONGRATS! Marked this internship as [OFFER RECEIVED]:\n  " + internship);
