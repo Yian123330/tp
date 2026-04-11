@@ -82,7 +82,6 @@ public class AddInternshipCommand extends Command {
         String companyName = addParams.get(0).trim();
         String title = String.join(" ", titleParams).trim();
 
-        // 🛠️ CHANGED: Added deep validation for length and valid characters (Fixes Bugs 2, 3, 4 and Peer Suggestion)
         if (companyName.length() < 2 || title.length() < 2) {
             errorMessage.append("Company name and title must be at least 2 characters long!\n");
         }
@@ -98,18 +97,14 @@ public class AddInternshipCommand extends Command {
         if (!errorMessage.isEmpty()) {
             throw new GoldenCompassException(errorMessage.toString().trim());
         }
-        // 🛠️ END OF CHANGE
 
         Internship newInternship = new Internship(title, companyName);
 
-        // 🛠️ CHANGED: Added duplicate check before saving (Fixes Bug 1)
-        // Note: Assumes your InternshipList class has getSize() and getInternship(i). Adjust if it uses size() and get(i).
         for (int i = 0; i < internshipList.getSize(); i++) {
             if (internshipList.get(i).equals(newInternship)) {
                 throw new GoldenCompassException("Warning: This internship already exists in your list!");
             }
         }
-        // 🛠️ END OF CHANGE
 
         internshipList.add(newInternship);
 

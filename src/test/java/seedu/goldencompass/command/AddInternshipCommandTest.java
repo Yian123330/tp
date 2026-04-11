@@ -77,7 +77,7 @@ public class AddInternshipCommandTest {
         parser.parse("add");
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
     }
-    // 🛠️ CHANGED: Added tests for duplicate entries
+
     @Test
     public void execute_duplicateInternship_throwsException() throws GoldenCompassException {
         // Add it the first time (should succeed)
@@ -88,31 +88,24 @@ public class AddInternshipCommandTest {
         parser.parse("add Shopee /t Software Engineer");
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
     }
-    // 🛠️ END OF CHANGE
 
-    // 🛠️ CHANGED: Added test for input length < 2
     @Test
     public void execute_companyNameTooShort_throwsException() throws GoldenCompassException {
         parser.parse("add S /t Software Engineer");
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
     }
-    // 🛠️ END OF CHANGE
 
-    // 🛠️ CHANGED: Added test for input length > 40
     @Test
     public void execute_companyNameTooLong_throwsException() throws GoldenCompassException {
         String longName = "A".repeat(41);
         parser.parse("add " + longName + " /t Software Engineer");
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
     }
-    // 🛠️ END OF CHANGE
 
-    // 🛠️ CHANGED: Added test for invalid special characters
     @Test
     public void execute_invalidSpecialCharacters_throwsException() throws GoldenCompassException {
         // The pipe character "|" should trigger the exception
         parser.parse("add Meta | Google /t SWE");
         assertThrows(GoldenCompassException.class, addInternshipCommand::execute);
     }
-    // 🛠️ END OF CHANGE
 }
