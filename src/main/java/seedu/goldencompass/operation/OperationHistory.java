@@ -5,7 +5,7 @@ import java.util.Deque;
 
 public class OperationHistory {
     private static final int CAPACITY = 10;
-
+    private static final int REAL_CAPACITY = CAPACITY + 1; //since current version also takes up a space in stack.
 
     private final Deque<OperationSnapshot> undoStack;
     private final Deque<OperationSnapshot> redoStack;
@@ -16,7 +16,7 @@ public class OperationHistory {
     }
 
     public void saveSnapshot(OperationSnapshot snapshot) {
-        if(undoStack.size() == CAPACITY) {
+        if(undoStack.size() == REAL_CAPACITY) {
             undoStack.removeLast();
         }
         undoStack.addFirst(snapshot);
