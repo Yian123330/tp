@@ -41,24 +41,45 @@ Exits the program.
 
 ### Adding an internship application: `add`
 
-Adds a new internship application to the tracker. By default, the status of a newly added internship is set to `PENDING`.
+Adds a new internship application to the tracker. By default, the status of a newly added `Internship` is set to `PENDING`.
 
 **Format:** `add COMPANY_NAME /t TITLE`
 
 * `COMPANY_NAME` is the name of the company you are applying to.
 * The `/t` flag is strictly required and denotes the title of the role.
 
-**Examples:**
+**Input Constraints:**
+To maintain a clean and reliable tracker, the `add` command enforces the following rules:
+* **Length Limit:** Both the `COMPANY_NAME` and `TITLE` must be between 2 and 40 characters long.
+* **Valid Characters:** Only alphanumeric characters (letters and numbers), spaces, and commas `,` are permitted. Other special symbols (e.g., `|`, `@`, `!`) will be rejected.
+* **No Duplicates (Case-Insensitive):** You cannot add an `Internship` if an identical entry already exists in your list. The system ignores capitalization, meaning `GRAB` and `grab` are treated as the same company.
+
+* **Examples:**
 * `add Grab /t Software Engineer`
   Adds a Software Engineer role at Grab to your list.
 * `add Google /t Data Analyst`
   Adds a Data Analyst role at Google to your list.
 
-**Expected Output:**
+**Expected Output (Success):**
 ```text
 Got it! I've added this internship to your compass:
   Grab - Software Engineer
 ```
+
+**Expected Output (Error - Duplicate Entry):**
+```text
+Warning: This internship already exists in your list!
+```
+
+**Expected Output (Error - Invalid Characters):**
+```text
+Only alphanumeric characters and commas ',' are permitted.
+```
+**Note on multi-role applications:**
+* GoldenCompass supports applications for multiple roles within the same company.
+* If you provide the `/t` flag multiple times, the system will combine them into a single entry.
+* **Example:** `add Grab /t Backend /t DevOps` will be recorded as `Grab - Backend DevOps`.
+* **Pro-tip:** This is great for tracking "Hybrid" roles where you'll be doing more than one thing!
 
 ### Adding an interview: `add-interview`
 
@@ -295,6 +316,7 @@ Suppose you have added an internship and accidentally undone that, you want to r
 ```
 redo
 ```
+
 ### Marking an internship application as offer received: `mark`
 
 Updates the status of an existing internship application in your tracker to indicate that you have successfully received an offer.
@@ -303,15 +325,26 @@ Updates the status of an existing internship application in your tracker to indi
 
 * `INDEX` refers to the index number shown in the displayed internship list.
 * The index **must be a positive integer** (e.g., 1, 2, 3, ...).
+* **Constraint:** You cannot mark an internship that is already tagged as `[OFFER RECEIVED]` or `[REJECTED]`.
 
 **Examples:**
 * `list` followed by `mark 4`
   Marks the 4th internship in the current list as having an offer.
 
-**Expected Output:**
+**Expected Output (Success):**
 ```text
 HUGE CONGRATS! Marked this internship as [OFFER RECEIVED]:
   Grab - Software Engineer [OFFER RECEIVED]
+```
+
+**Expected Output (Error - Already Offered):**
+```text
+Error: This internship is already marked as OFFER RECEIVED!
+```
+
+**Expected Output (Error - Already Rejected):**
+```text
+Error: You cannot mark an internship that has already been rejected!
 ```
 
 ### Marking an internship application as rejected: `reject`
@@ -322,17 +355,23 @@ Updates the status of an existing internship application to indicate that it is 
 
 * `INDEX` refers to the index number shown in the displayed internship list.
 * The index **must be a positive integer** (e.g., 1, 2, 3, ...).
+* **Constraint:** You cannot reject an internship that is already tagged as `[REJECTED]`.
+* **Note:** You *can* reject an internship that is currently tagged as `[OFFER RECEIVED]` if you decide to decline their offer!
 
 **Examples:**
 * `list` followed by `reject 4`
   Marks the 4th internship in the current list as rejected.
 
-**Expected Output:**
+**Expected Output (Success):**
 ```text
 Rejection builds character! Marked this internship as [REJECTED]:
   Grab - Software Engineer [REJECTED] 
 ```
 
+**Expected Output (Error - Already Rejected):**
+```text
+Error: This internship has already been rejected!
+```
 ### Saving the data
 
 GoldenCompass saves your data to your hard disk automatically after any command that changes the data. There is no need to save manually!

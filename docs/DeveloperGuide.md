@@ -151,11 +151,13 @@ When the user enters `add Grab /t Software Engineer`, the execution flow is as f
 2. The system looks up the corresponding command and executes `AddInternshipCommand`.
 3. `AddInternshipCommand` retrieves the company name parameter using `getParamsOf(parser.getCommand())` and the title parameter using `getParamsOf("/t")`.
 4. The command initializes a `StringBuilder` to act as an error message accumulator.
-5. The command sequentially checks for a missing company name, a missing `/t` flag, and an empty title string. If any checks fail, a specific error message is appended to the `StringBuilder`.
-6. If the `StringBuilder` is not empty after all checks, a single `GoldenCompassException` is thrown containing all accumulated error messages.
-7. If validation passes, a new `Internship` object is instantiated using the parsed company name and title.
-8. The command calls `internshipList.add(newInternship)` to store the application in memory.
-9. The command logs the successful creation and prints a confirmation message to the user via the `Ui`.
+5. The command sequentially checks for basic presence: a missing company name, a missing `/t` flag, and an empty title string. If any checks fail, a specific error message is appended to the `StringBuilder`.
+6. If basic presence checks fail, a single `GoldenCompassException` is thrown immediately.
+7. The command then performs deep validation to ensure both the company name and title are between 2 and 40 characters long, and contain only alphanumeric characters, spaces, or commas. Any violations are appended to the `StringBuilder`.
+8. If the `StringBuilder` is not empty after deep validation, a `GoldenCompassException` is thrown.
+9. If all validations pass, a new `Internship` object is instantiated using the parsed company name and title.
+10. The command calls `internshipList.add(newInternship)` to store the application in memory. The list strictly encapsulates its data by checking for duplicates internally (case-insensitive) and throwing an `IllegalArgumentException` if an identical internship already exists, which the command then catches and rethrows as a `GoldenCompassException`.
+11. The command logs the successful creation and prints a confirmation message to the user via the `Ui`.
 
 The following class diagram shows the main structural components involved in the add internship feature:
 
@@ -167,25 +169,32 @@ The following sequence diagram illustrates the execution flow when the user ente
 
 #### Input Validation
 
-The command implements an accumulated validation strategy to ensure robustness:
+The command implements an accumulated validation strategy alongside deep string inspection to ensure robustness:
 
-| Validation Layer | Description | Example Error Message |
-|-----------------|-------------|----------------------|
-| **Company Presence** | Verifies the company name parameter is not empty | "Company name cannot be empty!" |
-| **Flag Presence** | Verifies the `/t` flag was parsed successfully | "Invalid flag or missing title! Please use the '/t' flag for the role." |
-| **Title Presence** | Ensures the text following the `/t` flag is not blank | "Internship title cannot be empty!" |
+| Validation Layer | Description                                                                | Example Error Message |
+|-----------------|----------------------------------------------------------------------------|----------------------|
+| **Company Presence** | Verifies the company name parameter is not empty                           | "Company name cannot be empty!" |
+| **Flag Presence** | Verifies the `/t` flag was parsed successfully                             | "Invalid flag or missing title! Please use the '/t' flag for the role." |
+| **Title Presence** | Ensures the text following the `/t` flag is not blank                      | "Internship title cannot be empty!" |
+| **Length Validation** | Enforces minimum (2) and maximum (40) character limits                     | "Input exceeds maximum allowed length of 40 characters!" |
+| **Character Filtering** | Restricts input to alphanumeric characters, spaces, and commas             | "Only alphanumeric characters and commas ',' are permitted." |
+| **Duplicate Prevention** | Handled internally by `InternshipList#add()`, which checks existing entries using `equals()` to strictly encapsulate and prevent identical internships (case-insensitive matching). | "Warning: This internship already exists in your list!" |
 
 #### Defensive Programming Features
 
 The implementation includes several defensive programming measures:
 
 **1. Assertions**: Verify internal state invariants during command initialization.
+```java
 assert parser != null : "Parser passed to AddInternshipCommand cannot be null";
 assert internshipList != null : "InternshipList passed to AddInternshipCommand cannot be null";
+```
 
 **2. Logging**: Track execution flow and record specific user syntax errors for debugging.
+```java
 logger.log(Level.INFO, "Starting execution of AddInternshipCommand...");
 logger.log(Level.WARNING, "Failed to add internship: Company name is missing.");
+```
 
 **3. Error Accumulation**: Instead of failing at the first mistake, the command gathers all input errors into a `StringBuilder` to prevent unexpected partial crashes and provide comprehensive feedback.
 
@@ -203,17 +212,33 @@ logger.log(Level.WARNING, "Failed to add internship: Company name is missing.");
   * **Pros:** Simpler and shorter code. Execution stops immediately, saving minor amounts of processing time.
   * **Cons:** Frustrating UX. A user who forgets both the company name and the `/t` flag will only see the "missing company name" error. After fixing it and pressing enter, they will be hit with the "missing flag" error, creating an annoying "whack-a-mole" experience.
 
+**Aspect: Handling of Multiple Flag Instances**
+
+* **Alternative 1 (Current Implementation): Parameter Concatenation**
+  * **Description:** Instead of rejecting redundant flags, the command retrieves all parameters associated with the `/t` flag. It joins these values with a space to allow for multi-role entries within a single application tracker entry.
+  * **Pros:** Supports users applying for hybrid roles or multiple positions at the same company (e.g., `/t Backend /t DevOps`) without requiring multiple separate entries. Aligns with a flexible, keyboard-driven input philosophy.
+  * **Cons:** Can lead to "silent" data entry errors if a user accidentally includes a second `/t` flag with a typo, as the system does not provide a warning for duplicate flags.
+
+* **Alternative 2: Strict Single-Flag Enforcement**
+  * **Description:** The command verifies the number of `/t` parameters and throws a `GoldenCompassException` if more than one instance is detected.
+  * **Pros:** Prevents accidental data corruption and follows the principle of "fail-fast" validation for cleaner data entry.
+  * **Cons:** Less flexible; requires users applying for multiple roles to manually format their strings rather than using the natural flag-based separation.
+
 #### Test Coverage
 
-The feature is covered by comprehensive unit tests to ensure all edge cases are handled:
+The feature is covered by comprehensive unit tests to ensure all edge cases and new constraints are handled:
 
 | Test Case | Description | Expected Outcome |
 |-----------|-------------|------------------|
-| `execute_validInput_addsInternship` | Execute `add Grab /t SWE` | Internship added to list, list size increases by 1 |
-| `execute_missingCompany_throwsException` | Execute `add /t SWE` | Throws `Exception` with missing company message |
-| `execute_missingFlag_throwsException` | Execute `add Grab SWE` | Throws `Exception` with missing flag message |
-| `execute_missingTitle_throwsException` | Execute `add Grab /t` | Throws `Exception` with missing title message |
-| `execute_missingMultiple_throwsException` | Execute `add /t` | Throws `Exception` containing both missing company and missing title messages |
+| `execute_validInput_addsInternshipSuccessfully` | Execute `add Grab /t SWE` | Internship added to list, list size increases by 1 |
+| `execute_missingCompanyName_throwsException` | Execute `add /t SWE` | Throws `Exception` with missing company message |
+| `execute_invalidFlag_throwsException` | Execute `add Grab /c SWE` | Throws `Exception` with missing flag message |
+| `execute_emptyTitle_throwsException` | Execute `add Grab /t` | Throws `Exception` with missing title message |
+| `execute_bareAddCommand_throwsException` | Execute `add` | Throws `Exception` for completely bare command |
+| `execute_duplicateInternship_throwsException` | Execute `add Grab /t SWE` twice | Throws `Exception` warning about duplicate entry |
+| `execute_companyNameTooShort_throwsException` | Execute `add S /t SWE` | Throws `Exception` for failing minimum length constraint |
+| `execute_companyNameTooLong_throwsException` | Execute `add [41 chars] /t SWE` | Throws `Exception` for failing maximum length constraint |
+| `execute_invalidSpecialCharacters_throwsException` | Execute `add Meta \| Google /t SWE` | Throws `Exception` for containing invalid symbols |
 
 ### List Command
 
@@ -1107,7 +1132,7 @@ The feature is covered by comprehensive unit tests in `DeleteInterviewCommandTes
 | `execute_emptyInternshipList_throwsException` | Delete from empty list | Throws `GoldenCompassException` |
 | `execute_multipleInternships_deletesCorrectInterview` | Delete interview from correct internship among multiple | Only target interview removed |
 
-### Mark Offer Feature
+### Mark Offer Command
 
 #### Overview
 
@@ -1128,9 +1153,10 @@ When the user enters `mark 1`, the execution flow is as follows:
 3. `MarkOfferCommand` retrieves the index parameter from the `Parser` using `getParamsOf(parser.getCommand())`.
 4. The command validates that the parameter is present, is a valid integer, and falls within the valid bounds of the `InternshipList` (between 1 and `internshipList.getSize()`).
 5. The command retrieves the `Internship` at the 0-based position `(index - 1)` from the `InternshipList`.
-6. The command calls `internship.markAsOffer()` to update the internal state and UI tag of the internship.
-7. The command immediately calls `storage.save(internshipList)` to persist the updated status to `data/internships.txt`.
-8. The command logs the successful update and prints a congratulatory confirmation message to the user via the `Ui`.
+6. The command attempts to call `internship.markAsOffer()`. The `Internship` object acts as a Finite State Machine (FSM), strictly validating its own state transitions. If the internship is already marked as `OFFER` or `REJECTED`, it throws an `IllegalStateException`.
+7. The command catches the `IllegalStateException` and rethrows it as a `GoldenCompassException` to display a clean error to the user. If no exception is thrown, the internal state and UI tag of the internship are updated.
+8. The command calls `storage.save(internshipList)` to persist the updated status to `data/internships.txt`.
+9. The command logs the successful update and prints a congratulatory confirmation message to the user via the `Ui`.
 
 The following class diagram shows the main structural components involved in the mark offer feature:
 
@@ -1149,32 +1175,55 @@ The command implements multiple layers of validation to ensure robustness:
 | **Presence Check** | Verifies that an index was provided | "Please provide the index of the internship! (e.g., mark 1)" |
 | **Type Check** | Ensures the index is a valid integer | "The index must be a number! (e.g., mark 1)" |
 | **Range Check** | Confirms the index is within the list bounds | "Invalid index! Please check your internship list." |
+| **State Validation** | Handled internally by `Internship#markAsOffer()` (FSM). Prevents illegal state transitions if the internship is already offered or rejected. | "Error: This internship is already marked as OFFER RECEIVED!" |
 
 #### Defensive Programming Features
 
 The implementation includes several defensive programming measures:
 
 **1. Assertions**: Verify internal state invariants during command initialization.
+```java
 assert parser != null : "Parser passed to MarkOfferCommand cannot be null";
 assert internshipList != null : "InternshipList passed to MarkOfferCommand cannot be null";
+```
 
 **2. Logging**: Track execution flow and potential user input errors for debugging.
+```java
 logger.log(Level.INFO, "Starting execution of MarkOfferCommand...");
 logger.log(Level.WARNING, "Failed to mark offer: Index out of bounds.");
+```
 
 **3. Bounds Checking**: Validate array indices strictly before attempting access to prevent runtime crashes.
+```java
 if (index < 1 || index > internshipList.getSize()) {
-throw new GoldenCompassException("Invalid index!...");
+    throw new GoldenCompassException("Invalid index!...");
 }
+```
 
 **4. Graceful Exception Handling**: Catch specific parsing errors and translate them into user-friendly messages rather than letting the application crash.
+```java
 try {
-index = Integer.parseInt(params.get(0).trim());
+    index = Integer.parseInt(params.get(0).trim());
 } catch (NumberFormatException e) {
-throw new GoldenCompassException("The index must be a number!...");
+    throw new GoldenCompassException("The index must be a number!...");
 }
+```
+
+**5. State Encapsulation (FSM)**: The `Internship` class protects its own status fields by explicitly rejecting invalid state transitions, preventing any command class from accidentally bypassing business rules.
 
 #### Design Considerations
+
+**Aspect: State Transition Validation Strategy**
+
+* **Alternative 1 (Current Implementation): FSM Encapsulation inside `Internship`**
+  * **Description:** The `Internship` class contains the logic to verify if a state transition is legal (e.g., checking if it's already rejected before marking as an offer). If illegal, it throws an `IllegalStateException` which the command catches.
+  * **Pros:** Excellent Object-Oriented design. The data (`status`) and the logic governing that data are encapsulated together. Prevents duplicate code if multiple commands ever need to change the status.
+  * **Cons:** Requires adding a `try-catch` block inside the command's execution flow.
+
+* **Alternative 2: Validation inside the Command**
+  * **Description:** The `MarkOfferCommand` checks `if(internship.isRejected())` directly before deciding whether to call `internship.markAsOffer()`.
+  * **Pros:** Keeps the `Internship` class slightly shorter and avoids using `try-catch` blocks for control flow.
+  * **Cons:** Violates encapsulation. The Command is doing the thinking for the Internship, making the system fragile if new developers create new commands that forget to implement these checks.
 
 **Aspect: Data Persistence Strategy for State Changes**
 
@@ -1188,18 +1237,6 @@ throw new GoldenCompassException("The index must be a number!...");
   * **Pros:** Faster execution time and decouples the command classes from the storage mechanism.
   * **Cons:** High risk of data loss. If the application crashes before exiting cleanly, the recorded offer status is permanently lost.
 
-**Aspect: Input Validation Strategy**
-
-* **Alternative 1 (Current Implementation): Step-by-Step Fail-Fast Validation**
-  * **Description:** The command independently checks for missing input, invalid formats, and out-of-bounds indices in sequence, throwing specific exceptions immediately.
-  * **Pros:** Excellent UX. The user receives precise, actionable feedback about exactly what part of their input was wrong.
-  * **Cons:** Slightly more verbose code within the `execute()` method.
-
-* **Alternative 2: Blanket Try-Catch Block**
-  * **Description:** The command attempts to parse and access the list directly, wrapping the logic in a single generic `try-catch` block.
-  * **Pros:** More compact code.
-  * **Cons:** Poor UX, as the user receives a generic "Invalid input" error regardless of the specific mistake made.
-
 #### Test Coverage
 
 The feature is covered by comprehensive unit tests to ensure all edge cases are handled:
@@ -1211,9 +1248,10 @@ The feature is covered by comprehensive unit tests to ensure all edge cases are 
 | `execute_nonNumericIndex_throwsException` | Execute `mark abc` | Throws `GoldenCompassException` for invalid number format |
 | `execute_indexOutOfBounds_throwsException` | Execute `mark 99` on a small list | Throws `GoldenCompassException` for invalid bounds |
 | `execute_negativeIndex_throwsException` | Execute `mark -1` | Throws `GoldenCompassException` for invalid bounds |
+| `execute_alreadyOffered_throwsException` | Execute `mark 1` on an already offered internship | Throws `Exception` to prevent duplicate state transition |
+| `execute_alreadyRejected_throwsException` | Execute `mark 1` on a rejected internship | Throws `Exception` to prevent illegal state transition |
 
-
-### Reject Offer Feature
+### Reject Offer Command
 
 #### Overview
 
@@ -1234,8 +1272,9 @@ When the user enters `reject 1`, the execution flow is as follows:
 3. `RejectOfferCommand` retrieves the index parameter from the `Parser` using `getParamsOf("reject")`.
 4. The command validates that the parameter is present, is a valid integer, and falls within the valid bounds of the `InternshipList` (between 1 and `internshipList.getSize()`).
 5. The command retrieves the `Internship` at the 0-based position `(index - 1)` from the `InternshipList`.
-6. The command calls `internship.markAsRejected()` to update the internal state and UI tag of the internship.
-7. The command logs the successful update and prints a confirmation message ("Rejection builds character! 💪") to the user via the inherited `ui` object.
+6. The command attempts to call `internship.markAsRejected()`. The `Internship` object acts as a Finite State Machine (FSM), strictly validating its own state transitions. If the internship is already marked as `REJECTED`, it throws an `IllegalStateException`.
+7. The command catches the `IllegalStateException` and rethrows it as a `GoldenCompassException` to display a clean error to the user. If no exception is thrown, the internal state and UI tag of the internship are updated.
+8. The command logs the successful update and prints a confirmation message ("Rejection builds character!...") to the user via the inherited `ui` object.
 
 The following class diagram shows the main structural components involved in the reject offer feature:
 
@@ -1254,32 +1293,55 @@ The command implements multiple layers of validation to ensure robustness:
 | **Presence Check** | Verifies that an index was provided | "Please provide the index of the internship! (e.g., reject 1)" |
 | **Type Check** | Ensures the index is a valid integer | "The index must be a number! (e.g., reject 1)" |
 | **Range Check** | Confirms the index is within the list bounds | "Invalid index! Please check your internship list." |
+| **State Validation** | Handled internally by `Internship#markAsRejected()` (FSM). Prevents illegal state transitions if the internship is already rejected. | "Error: This internship has already been rejected!" |
 
 #### Defensive Programming Features
 
 The implementation includes several defensive programming measures:
 
 **1. Assertions**: Verify internal state invariants during command initialization.
+```java
 assert parser != null : "Parser passed to RejectCommand cannot be null";
 assert internshipList != null : "InternshipList passed to RejectCommand cannot be null";
+```
 
 **2. Logging**: Track execution flow and potential user input errors for debugging.
+```java
 logger.log(Level.INFO, "Starting execution of RejectCommand...");
 logger.log(Level.WARNING, "Failed to reject: Index is not a number.");
+```
 
 **3. Bounds Checking**: Validate array indices strictly before attempting access to prevent runtime crashes.
+```java
 if (index < 1 || index > internshipList.getSize()) {
-throw new GoldenCompassException("Invalid index! Please check your internship list.");
+    throw new GoldenCompassException("Invalid index! Please check your internship list.");
 }
+```
 
 **4. Graceful Exception Handling**: Catch specific parsing errors and translate them into user-friendly messages rather than letting the application crash.
+```java
 try {
-index = Integer.parseInt(params.get(0).trim());
+    index = Integer.parseInt(params.get(0).trim());
 } catch (NumberFormatException e) {
-throw new GoldenCompassException("The index must be a number!...");
+    throw new GoldenCompassException("The index must be a number!...");
 }
+```
+
+**5. State Encapsulation (FSM)**: The `Internship` class protects its own status fields by explicitly rejecting invalid state transitions, preventing any command class from accidentally bypassing business rules.
 
 #### Design Considerations
+
+**Aspect: State Transition Validation Strategy**
+
+* **Alternative 1 (Current Implementation): FSM Encapsulation inside `Internship`**
+  * **Description:** The `Internship` class contains the logic to verify if a state transition is legal (e.g., checking if it's already rejected before marking it as rejected again). If illegal, it throws an `IllegalStateException` which the command catches.
+  * **Pros:** Excellent Object-Oriented design. The data (`status`) and the logic governing that data are encapsulated together. Prevents duplicate code if multiple commands ever need to change the status.
+  * **Cons:** Requires adding a `try-catch` block inside the command's execution flow.
+
+* **Alternative 2: Validation inside the Command**
+  * **Description:** The `RejectOfferCommand` checks `if(internship.isRejected())` directly before deciding whether to call `internship.markAsRejected()`.
+  * **Pros:** Keeps the `Internship` class slightly shorter and avoids using `try-catch` blocks for control flow.
+  * **Cons:** Violates encapsulation. The Command is doing the thinking for the Internship, making the system fragile if new developers create new commands that forget to implement these checks.
 
 **Aspect: Input Validation Strategy**
 
@@ -1304,6 +1366,9 @@ The feature is covered by comprehensive unit tests to ensure all edge cases are 
 | `execute_nonNumericIndex_throwsException` | Execute `reject abc` | Throws `GoldenCompassException` for invalid number format |
 | `execute_indexOutOfBounds_throwsException` | Execute `reject 99` on a small list | Throws `GoldenCompassException` for invalid bounds |
 | `execute_negativeIndex_throwsException` | Execute `reject -1` | Throws `GoldenCompassException` for invalid bounds |
+| `execute_alreadyRejected_throwsException` | Execute `reject 1` on an already rejected internship | Throws `Exception` to prevent duplicate state transition |
+| `execute_hasOffer_marksRejectSuccessfully` | Execute `reject 1` on an internship marked as OFFER | Internship status updates to REJECTED successfully |
+
 ### Alias
 #### Overview 
 

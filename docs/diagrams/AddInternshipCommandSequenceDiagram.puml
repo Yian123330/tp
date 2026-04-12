@@ -4,7 +4,8 @@ participant ":Parser" as Parser
 participant ":Executor" as Exec
 participant ":AddInternshipCommand" as Cmd
 participant ":InternshipList" as List
-participant ":Internship" as Intern
+participant "existing:Internship" as ExistingIntern
+participant "newInternship:Internship" as Intern
 
 User -> Parser : "add Grab /t Software Engineer"
 activate Parser
@@ -25,20 +26,37 @@ activate Parser
 Parser --> Cmd : titleParams
 deactivate Parser
 
-note right of Cmd : Validates company name,\nflag, and title strings
+note right of Cmd : Validates presence, length,\nand valid characters
 
-alt missing company name or title
+alt invalid inputs
     Cmd -> User : throw GoldenCompassException
-else params valid
-    create "newInternship:Internship" as Intern
+else inputs valid
+    create Intern
     Cmd -> Intern : new Internship(title, companyName)
 
     Cmd -> List : add(newInternship)
     activate List
-    List --> Cmd
-    deactivate List
 
-    Cmd -> Cmd : ui.print("Got it! I've added this internship...")
+    loop i = 0 to size - 1
+        List -> List : get(i)
+        activate List
+        List --> List : existing
+        deactivate List
+
+        List -> ExistingIntern : equals(newInternship)
+        activate ExistingIntern
+        ExistingIntern --> List : isDuplicate
+        deactivate ExistingIntern
+    end
+
+    alt duplicate found
+        List --> Cmd : throw IllegalArgumentException
+        Cmd -> User : throw GoldenCompassException
+    else no duplicate
+        List --> Cmd : returns successfully
+        deactivate List
+        Cmd -> Cmd : ui.print("Got it! I've added...")
+    end
 end
 
 deactivate Cmd
