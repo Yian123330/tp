@@ -125,19 +125,21 @@ class DeleteInterviewCommandTest {
 
     @Test
     void execute_noInterviewForInternship_throwsException() throws Exception {
-        // Add internship without interview
+        // Add an internship (but no interview)
         Internship internship = new Internship("Software Engineer", "Google");
         internshipList.add(internship);
 
-        parser.parse("delete-interview 1");
+        // Verify no interviews exist
+        assertEquals(0, interviewList.size());
 
+        parser.parse("delete-interview 1");
         deleteInterviewCommand = new DeleteInterviewCommand(parser, internshipList, interviewList);
 
         GoldenCompassException exception = assertThrows(GoldenCompassException.class, () -> {
             deleteInterviewCommand.execute();
         });
 
-        assertTrue(exception.getMessage().contains("does not have an interview scheduled"));
+        assertTrue(exception.getMessage().contains("There are no interviews to delete"));
     }
 
     @Test
