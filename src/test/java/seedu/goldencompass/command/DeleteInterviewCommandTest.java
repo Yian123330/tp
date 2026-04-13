@@ -187,4 +187,55 @@ class DeleteInterviewCommandTest {
         assertTrue(output.contains("Deleted interview for Google"));
         assertFalse(output.contains("Meta"));
     }
+
+    @Test
+    void execute_deleteByInterviewIndex_deletesCorrectInterview() throws Exception {
+        // Add first internship with interview
+        Internship google = new Internship("Software Engineer", "Google");
+        internshipList.add(google);
+        LocalDateTime date1 = LocalDateTime.of(2025, 6, 15, 10, 0);
+        Interview interview1 = new Interview(google, date1);
+        google.setInterview(interview1);
+        interviewList.add(interview1);
+
+        // Add second internship with interview
+        Internship meta = new Internship("Frontend Developer", "Meta");
+        internshipList.add(meta);
+        LocalDateTime date2 = LocalDateTime.of(2025, 7, 1, 14, 30);
+        Interview interview2 = new Interview(meta, date2);
+        meta.setInterview(interview2);
+        interviewList.add(interview2);
+
+        // Add third internship with interview
+        Internship amazon = new Internship("Backend Developer", "Amazon");
+        internshipList.add(amazon);
+        LocalDateTime date3 = LocalDateTime.of(2025, 8, 10, 9, 0);
+        Interview interview3 = new Interview(amazon, date3);
+        amazon.setInterview(interview3);
+        interviewList.add(interview3);
+
+        assertEquals(3, interviewList.size());
+
+        // Delete the SECOND interview (Meta)
+        parser.parse("delete-interview 2");
+        deleteInterviewCommand = new DeleteInterviewCommand(parser, internshipList, interviewList);
+        deleteInterviewCommand.execute();
+
+        // Verify only the second interview was deleted
+        assertEquals(2, interviewList.size());
+
+        // Check remaining interviews (Google and Amazon should remain)
+        assertEquals("Google", interviewList.getInterviews().get(0).getInternship().getCompanyName());
+        assertEquals("Amazon", interviewList.getInterviews().get(1).getInternship().getCompanyName());
+
+        // Verify the deleted interview's internship still exists (interview only deleted)
+        assertNotNull(internshipList.get(1)); // Meta internship still exists
+        assertNull(meta.getInterview()); // But its interview is gone
+
+        // Verify output message
+        String output = outputStream.toString();
+        assertTrue(output.contains("Deleted interview for Meta"));
+        assertFalse(output.contains("Google"));
+        assertFalse(output.contains("Amazon"));
+    }
 }

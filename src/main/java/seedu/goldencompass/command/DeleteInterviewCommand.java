@@ -33,7 +33,7 @@ public class DeleteInterviewCommand extends Command {
 
         // Check if index is provided
         if (params == null || params.isEmpty() || params.get(0).trim().isEmpty()) {
-            throw new GoldenCompassException("Please provide the index of the internship to delete interview from!");
+            throw new GoldenCompassException("Please provide the index of the interview to delete!");
         }
 
         int interviewIndex;
@@ -49,22 +49,20 @@ public class DeleteInterviewCommand extends Command {
         }
 
         // Validate interview index range (1-based to 0-based conversion)
-        if (interviewIndex < 1 || interviewIndex > internshipList.getSize()) {
+        if (interviewIndex < 1 || interviewIndex > interviewList.size()) {
             throw new GoldenCompassException("Invalid index! Please enter a number between 1 and "
-                    + internshipList.getSize());
+                    + interviewList.size());
         }
 
         // Get the interview at the specified index from InterviewList (0-based)
         Interview interviewToDelete = interviewList.get(interviewIndex - 1);
 
-        if (interviewToDelete == null) {
-            throw new GoldenCompassException("Interview not found.");
-        }
-
         // Get the associated internship
         Internship internship = interviewToDelete.getInternship();
         if (internship == null) {
-            throw new GoldenCompassException("Associated internship not found.");
+            // Still delete the corrupted interview
+            interviewList.getInterviews().remove(interviewToDelete);
+            throw new GoldenCompassException("Associated internship not found. Corrupted interview has been removed.");
         }
 
         // Format the date for display
