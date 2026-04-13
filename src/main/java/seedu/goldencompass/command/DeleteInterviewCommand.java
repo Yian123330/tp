@@ -79,7 +79,7 @@ public class DeleteInterviewCommand extends Command {
         internship.deleteInterview();
 
         // Print confirmation message
-        ui.print("✓ Deleted interview for " + internship.getCompanyName()
+        ui.print("Deleted interview for " + internship.getCompanyName()
                 + " (scheduled on: " + formattedDate + ")");
 
         logger.info("Deleted interview at index " + interviewIndex + " for internship: " + internship.getCompanyName());
